@@ -22,7 +22,7 @@ interface Props {
 
 const { lang, paths, title, description, section = 'other', schema } = Astro.props;
 const t = dict(lang);
-const site = Astro.site ?? new URL('https://joseramos1999.github.io');
+const site = Astro.site ?? new URL('https://dmxtotalcontrol.com');
 const absolute = (path: string) => new URL(url(path), site).href;
 const canonical = absolute(paths[lang]);
 const image = absolute(`/og/${lang}.png`);

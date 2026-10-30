@@ -2,11 +2,12 @@
 import { defineConfig, fontProviders } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// Where the site is published. Until the domain exists it is GitHub Pages
-// (https://joseramos1999.github.io/DMXTotalControl-web/); the deploy workflow
-// takes both from the Pages settings, so a custom domain only changes them there.
-const site = process.env.SITE_URL || 'https://joseramos1999.github.io';
-const base = process.env.BASE_PATH ?? '/DMXTotalControl-web';
+// Where the site is published: https://dmxtotalcontrol.com. The deploy workflow
+// takes both from the Pages settings (before a custom domain, github.io with
+// the base /DMXTotalControl-web). Pages reports http:// until HTTPS is
+// enforced, and the site's addresses must always be https.
+const site = (process.env.SITE_URL || 'https://dmxtotalcontrol.com').replace(/^http:\/\//, 'https://');
+const base = process.env.BASE_PATH ?? '';
 
 export default defineConfig({
 	site,

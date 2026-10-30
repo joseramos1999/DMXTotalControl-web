@@ -41,7 +41,7 @@ export const SEGMENTS = Object.keys(SEGMENT_SLUGS) as Segment[];
 export type Guide = keyof typeof GUIDE_SLUGS;
 export const GUIDES = Object.keys(GUIDE_SLUGS) as Guide[];
 
-/** A site path with the base in front (the base is /DMXTotalControl-web on GitHub Pages) */
+/** A site path with the base in front (empty on dmxtotalcontrol.com) */
 export function url(path: string): string {
 	const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 	return `${base}${path}`;

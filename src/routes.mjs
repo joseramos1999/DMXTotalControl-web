@@ -1,5 +1,5 @@
 // The addresses of the site (used by src/i18n.ts). Paths are without the
-// base (/DMXTotalControl-web on GitHub Pages).
+// base, which is empty on dmxtotalcontrol.com.
 
 export const REPO = 'https://github.com/joseramos1999/DMXTotalControl';
 export const ISSUES = `${REPO}/issues/new/choose`;

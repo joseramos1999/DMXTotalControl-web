@@ -56,8 +56,8 @@ Para que los usuarios la pongan en sus vídeos, carteles o webs.
 El SVG mide 225 × 56; el PNG, el doble (450 × 112). En una web:
 
 ```html
-<a href="https://joseramos1999.github.io/DMXTotalControl-web/">
-  <img src="https://joseramos1999.github.io/DMXTotalControl-web/marca/hecho-con-dtc-oscuro.svg"
+<a href="https://dmxtotalcontrol.com/">
+  <img src="https://dmxtotalcontrol.com/marca/hecho-con-dtc-oscuro.svg"
        alt="Hecho con DMX Total Control" width="225" height="56">
 </a>
 ```
@@ -88,7 +88,7 @@ Se cambia en github.com, en el repositorio del programa:
 
 1. **About** (el engranaje junto a «About», en la portada del repositorio):
    - *Description*: `Free and open-source DMX lighting control for Windows, made for live shows · Control de iluminación DMX libre y gratuito para Windows`
-   - *Website*: la dirección de la web (`https://joseramos1999.github.io/DMXTotalControl-web/` hasta que haya dominio).
+   - *Website*: la dirección de la web (`https://dmxtotalcontrol.com/` hasta que haya dominio).
    - *Topics*: `dmx`, `dmx512`, `lighting-control`, `stage-lighting`, `lighting`, `art-net`, `sacn`, `e131`, `midi`, `osc`, `akai-apc`, `live-show`, `windows`, `qt6`, `qml`, `open-source`.
    - Desmarcar *Packages* y *Deployments* si no se usan, para que la portada quede limpia.
 2. **Settings › General › Social preview**: subir `public/marca/github-social.png` (1280 × 640). Es la imagen que sale al compartir el repositorio.

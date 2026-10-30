@@ -29,7 +29,7 @@ const shots: { name: Shot; alt: string }[] = [
 	{ name: 'mixer', alt: t.features.sections.live.alt },
 ];
 
-const site = Astro.site ?? new URL('https://joseramos1999.github.io');
+const site = Astro.site ?? new URL('https://dmxtotalcontrol.com');
 const home = new URL(pageUrl('home', lang), site).href;
 const badge = (theme: string) => url(`/marca/${p.badgeFile}-${theme}.svg`);
 const snippet = `<a href="${home}">\n  <img src="${new URL(badge('oscuro'), site).href}"\n       alt="${p.badgeAlt}" width="225" height="56">\n</a>`;

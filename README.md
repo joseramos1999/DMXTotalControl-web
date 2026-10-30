@@ -41,12 +41,12 @@ Necesita Node.js 22 o posterior (aquí, la LTS 26).
 
 ```bash
 npm install
-npm run dev        # copia el manual y abre http://localhost:4321/DMXTotalControl-web/
+npm run dev        # copia el manual y abre http://localhost:4321/
 npm run build      # la web completa en dist/
 npm run preview    # sirve dist/
 ```
 
-Mientras no haya dominio, la web vive en `https://joseramos1999.github.io/DMXTotalControl-web/`, por eso las direcciones locales llevan `/DMXTotalControl-web/`. Con un dominio propio, la publicación cambia sola a la raíz (ver «Dominio propio»).
+La web vive en **https://dmxtotalcontrol.com**, en la raíz del dominio (ver «Dominio»).
 
 ## Publicar
 
@@ -60,9 +60,22 @@ Una sola vez, en GitHub:
 
 GitHub desactiva los workflows programados de un repositorio sin commits en 60 días: si pasa, se vuelve a activar desde Actions.
 
-### Dominio propio
+### Dominio
 
-Al registrar el dominio (por ejemplo `dmxtotalcontrol.com`): en **Settings › Pages › Custom domain**, el dominio; en el DNS, los registros que indica GitHub; y activar **Enforce HTTPS**. El workflow lee la dirección de Pages, así que la siguiente publicación ya sale en la raíz del dominio, sin tocar el código.
+`dmxtotalcontrol.com` está registrado en GoDaddy, verificado en la cuenta de GitHub (Settings › Pages, con el registro TXT `_github-pages-challenge-joseramos1999`) y puesto en **Settings › Pages › Custom domain** de este repositorio, con **Enforce HTTPS**.
+
+En el DNS de GoDaddy, la web usa solo estos registros:
+
+| Tipo | Nombre | Valor |
+|---|---|---|
+| A | `@` | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` |
+| AAAA | `@` | `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153` |
+| CNAME | `www` | `joseramos1999.github.io` |
+| TXT | `_github-pages-challenge-joseramos1999` | El código de verificación de GitHub |
+
+El resto (MX, `autodiscover`, los `_domainkey`, SPF, DMARC, `sip`, `lyncdiscover`, `msoid`…) es el correo de Microsoft 365: no hay que tocarlo.
+
+El workflow lee la dirección de Pages, así que si el dominio cambia no hay que tocar el código. Pages da la dirección con `http://` hasta que se activa HTTPS; `astro.config.mjs` la pasa siempre a `https://`.
 
 ## Con cada versión del programa
 

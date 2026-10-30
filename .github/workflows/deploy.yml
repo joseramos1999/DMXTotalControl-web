@@ -45,7 +45,7 @@ jobs:
         env:
           APP_REPO: app
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # The Pages address: github.io/DMXTotalControl-web, or the custom domain once it is set
+          # The Pages address: https://dmxtotalcontrol.com, the custom domain set in Settings › Pages
           SITE_URL: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
