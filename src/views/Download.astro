@@ -1,0 +1,273 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import { ISSUES, REPO, formatDate, formatSize, pageUrl, type Lang } from '../i18n';
+import { RELEASES_URL, release } from '../data/release';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { installer } = release;
+const date = formatDate(release.date, lang);
+const size = formatSize(installer.size, lang);
+const hashCommand = `Get-FileHash .\\${installer.name}`;
+
+const copy = {
+	es: {
+		title: 'Descargar',
+		description: `Descarga gratis DMX Total Control ${release.version} para Windows 10 y 11: un instalador de ${size}, sin registro y sin permisos de administrador.`,
+		h1: 'Descargar DMX Total Control',
+		lead: 'Gratis, sin registro y sin permisos de administrador.',
+		platform: 'Windows 10 y 11 (64 bits)',
+		meta: `Versión ${release.version} · ${date} · ${size}`,
+		button: 'Descargar el instalador',
+		sha: 'Huella SHA-256',
+		copy: 'Copiar',
+		copied: 'Copiada',
+		notes: 'Novedades de esta versión',
+		all: 'Todas las versiones',
+		stepsTitle: 'Instalarlo en un minuto',
+		steps: [
+			'Descarga el instalador y ábrelo.',
+			'Si Windows dice <strong>«Windows protegió su PC»</strong>, pulsa <strong>Más información</strong> y después <strong>Ejecutar de todas formas</strong>.',
+			'Se instala para tu usuario, sin pedir permisos de administrador, con accesos directos en el escritorio y el menú Inicio.',
+			'La primera vez, la guía de primeros pasos te enseña el programa. Los shows de ejemplo están en <strong>Abrir ▾ › Ejemplos</strong>.',
+		],
+		whyTitle: '¿Por qué avisa Windows?',
+		why: 'El instalador todavía no está firmado con un certificado de firma de código, y SmartScreen avisa de cualquier programa nuevo sin firmar. Firmarlo está en la hoja de ruta. Mientras tanto, puedes comprobar que el archivo es el original: en PowerShell, en la carpeta de la descarga, ejecuta',
+		why2: 'y compara el resultado con la huella SHA-256 de arriba. La calcula GitHub al publicar la versión, y el programa la comprueba él mismo en cada actualización.',
+		updatesTitle: 'Actualizaciones',
+		updates: 'El programa avisa de cada versión nueva y la instala él mismo después de comprobar su huella. Se puede desactivar en Opciones › Actualizaciones.',
+		needTitle: 'Qué necesitas',
+		need: [
+			'Un ordenador con Windows 10 u 11 de 64 bits.',
+			'Para sacar DMX: una interfaz DMX USB o un nodo Art-Net o sACN.',
+			'Sin interfaz también puedes programar y probar el show: los niveles DMX se ven en el propio programa o en un visualizador por Art-Net o sACN.',
+		],
+		otherTitle: '¿Mac o Linux?',
+		other: 'Por ahora solo hay instalador para Windows. El código compila en Linux y macOS con Qt 6: las instrucciones están en el',
+		otherLink: 'README',
+		other2: 'Si lo necesitas en otro sistema,',
+		other2Link: 'cuéntanoslo',
+		other3: ': nos ayuda a decidir qué viene después.',
+	},
+	en: {
+		title: 'Download',
+		description: `Download DMX Total Control ${release.version} for Windows 10 and 11 for free: a ${size} installer, no sign-up and no administrator rights.`,
+		h1: 'Download DMX Total Control',
+		lead: 'Free, no sign-up and no administrator rights.',
+		platform: 'Windows 10 and 11 (64-bit)',
+		meta: `Version ${release.version} · ${date} · ${size}`,
+		button: 'Download the installer',
+		sha: 'SHA-256 fingerprint',
+		copy: 'Copy',
+		copied: 'Copied',
+		notes: 'What’s new in this version',
+		all: 'All versions',
+		stepsTitle: 'Install it in a minute',
+		steps: [
+			'Download the installer and open it.',
+			'If Windows says <strong>“Windows protected your PC”</strong>, click <strong>More info</strong> and then <strong>Run anyway</strong>.',
+			'It installs for your user, without asking for administrator rights, with shortcuts on the desktop and in the Start menu.',
+			'The first time, the first-steps guide shows you around. The example shows are in <strong>Open ▾ › Examples</strong>.',
+		],
+		whyTitle: 'Why does Windows warn?',
+		why: 'The installer is not signed with a code-signing certificate yet, and SmartScreen warns about any new unsigned program. Signing it is on the roadmap. Meanwhile you can check that the file is the original: in PowerShell, in the download folder, run',
+		why2: 'and compare the result with the SHA-256 fingerprint above. GitHub computes it when the version is published, and the program checks it itself on every update.',
+		updatesTitle: 'Updates',
+		updates: 'The program tells you about each new version and installs it itself after checking its fingerprint. You can turn this off in Options › Updates.',
+		needTitle: 'What you need',
+		need: [
+			'A computer with 64-bit Windows 10 or 11.',
+			'To output DMX: a USB DMX interface or an Art-Net or sACN node.',
+			'Without an interface you can still program and test the show: the DMX levels show in the program itself or in a visualiser over Art-Net or sACN.',
+		],
+		otherTitle: 'Mac or Linux?',
+		other: 'For now there is only a Windows installer. The code builds on Linux and macOS with Qt 6: the instructions are in the',
+		otherLink: 'README',
+		other2: 'If you need it on another system,',
+		other2Link: 'tell us',
+		other3: ': it helps us decide what comes next.',
+	},
+}[lang];
+---
+
+<Site lang={lang} route="download" title={copy.title} description={copy.description}>
+	<section class="page-head">
+		<div class="wrap narrow">
+			<h1>{copy.h1}</h1>
+			<p class="lead">{copy.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap narrow body">
+		<div class="card get">
+			<div class="platform">
+				<Icon name="desktop" size="1.6em" />
+				<div>
+					<strong>{copy.platform}</strong>
+					<span>{copy.meta}</span>
+				</div>
+			</div>
+			<a class="btn btn-primary btn-lg" href={installer.url} download>
+				<Icon name="download" size="1.2em" />
+				{copy.button}
+			</a>
+			<p class="file">{installer.name}</p>
+			{
+				installer.sha256 && (
+					<div class="sha">
+						<span>{copy.sha}</span>
+						<div class="sha-row">
+							<code id="sha">{installer.sha256}</code>
+							<button class="btn btn-ghost btn-sm" type="button" data-copy="sha" data-done={copy.copied}>
+								{copy.copy}
+							</button>
+						</div>
+					</div>
+				)
+			}
+			<p class="links">
+				<a href={pageUrl('news', lang, `#v${release.version}`)}>{copy.notes}</a>
+				<a href={RELEASES_URL}>{copy.all}</a>
+			</p>
+		</div>
+
+		<div class="prose">
+			<h2>{copy.stepsTitle}</h2>
+			<ol class="steps">
+				{copy.steps.map((s) => <li set:html={s} />)}
+			</ol>
+
+			<h2>{copy.whyTitle}</h2>
+			<div class="note">
+				<Icon name="warning" size="1.2em" />
+				<div>
+					<p>{copy.why}</p>
+					<pre><code>{hashCommand}</code></pre>
+					<p>{copy.why2}</p>
+				</div>
+			</div>
+
+			<h2>{copy.updatesTitle}</h2>
+			<p>{copy.updates}</p>
+
+			<h2>{copy.needTitle}</h2>
+			<ul>
+				{copy.need.map((n) => <li>{n}</li>)}
+			</ul>
+
+			<h2>{copy.otherTitle}</h2>
+			<p>
+				{copy.other} <a href={`${REPO}#readme`}>{copy.otherLink}</a>. {copy.other2} <a href={ISSUES}>{copy.other2Link}</a>{copy.other3}
+			</p>
+		</div>
+	</div>
+</Site>
+
+<script>
+	for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+		button.addEventListener('click', async () => {
+			const text = document.getElementById(button.dataset.copy!)?.textContent ?? '';
+			try {
+				await navigator.clipboard.writeText(text);
+				const label = button.textContent;
+				button.textContent = button.dataset.done ?? label;
+				setTimeout(() => (button.textContent = label), 1600);
+			} catch {
+				// No clipboard (an old browser or no permission): the hash stays selectable.
+			}
+		});
+	}
+</script>
+
+<style>
+	.body {
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.get {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		padding: clamp(24px, 4vw, 36px);
+		background:
+			radial-gradient(120% 140% at 100% 0%, rgba(61, 139, 253, 0.16), transparent 55%),
+			var(--surface);
+		border-color: var(--line-strong);
+		margin-bottom: 24px;
+	}
+
+	.platform {
+		display: flex;
+		gap: 14px;
+		align-items: center;
+	}
+
+	.platform div {
+		display: grid;
+	}
+
+	.platform span,
+	.file {
+		color: var(--muted);
+		font-size: 0.93rem;
+	}
+
+	.file {
+		margin: -6px 0 0;
+		font-family: var(--mono);
+		font-size: 0.85rem;
+		word-break: break-all;
+	}
+
+	.sha {
+		width: 100%;
+		display: grid;
+		gap: 6px;
+		font-size: 0.85rem;
+		color: var(--faint);
+	}
+
+	.sha-row {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.sha code {
+		flex: 1 1 260px;
+		min-width: 0;
+		word-break: break-all;
+		padding: 8px 10px;
+		font-size: 0.8rem;
+		color: var(--text);
+	}
+
+	.links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		margin: 0;
+		font-weight: 600;
+	}
+
+	.steps li {
+		margin-bottom: 0.7em;
+	}
+
+	pre {
+		margin: 0 0 1em;
+		overflow-x: auto;
+	}
+
+	pre code {
+		display: block;
+		padding: 10px 12px;
+		white-space: pre;
+	}
+</style>

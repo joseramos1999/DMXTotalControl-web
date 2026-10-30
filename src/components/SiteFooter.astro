@@ -1,0 +1,138 @@
+---
+import logo from '../assets/logo.svg';
+import { ISSUES, REPO, manualUrl, navStrings, pageUrl, strings, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = strings[lang];
+const n = navStrings(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<div class="wrap cols">
+		<div class="about">
+			<a class="brand" href={pageUrl('home', lang)}>
+				<img src={logo.src} width="28" height="28" alt="" />
+				<span>DMX Total Control</span>
+			</a>
+			<p>{t.footerAbout}</p>
+		</div>
+		<div>
+			<h2>{t.program}</h2>
+			<ul>
+				<li><a href={pageUrl('download', lang)}>{n.download}</a></li>
+				<li><a href={manualUrl(lang)}>{n.manual}</a></li>
+				<li><a href={pageUrl('news', lang)}>{n.news}</a></li>
+				<li><a href={pageUrl('faq', lang)}>{n.faq}</a></li>
+			</ul>
+		</div>
+		<div>
+			<h2>{t.community}</h2>
+			<ul>
+				<li><a href={REPO}>{t.source}</a></li>
+				<li><a href={ISSUES}>{t.reportBug}</a></li>
+				<li><a href={ISSUES}>{t.suggest}</a></li>
+				<li><a href={`${REPO}/blob/main/ROADMAP.md`}>{t.roadmap}</a></li>
+			</ul>
+		</div>
+		<div>
+			<h2>{t.legalTitle}</h2>
+			<ul>
+				<li><a href={pageUrl('legal', lang)}>{t.legal}</a></li>
+				<li><a href={pageUrl('legal', lang, lang === 'es' ? '#creditos' : '#credits')}>{t.credits}</a></li>
+				<li><a href={`${REPO}/blob/main/COPYING`}>{t.license}</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="wrap bottom">
+		<p>© {year} DMX Total Control · {lang === 'es' ? 'Software libre bajo la licencia Apache 2.0' : 'Free software under the Apache License 2.0'}</p>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		border-top: 1px solid var(--line);
+		background: var(--bg-raised);
+		padding: 56px 0 28px;
+		font-size: 0.95rem;
+	}
+
+	.cols {
+		display: grid;
+		gap: 32px;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.about {
+		grid-column: 1 / -1;
+	}
+
+	@media (min-width: 860px) {
+		.cols {
+			grid-template-columns: 2fr 1fr 1fr 1fr;
+		}
+		.about {
+			grid-column: auto;
+		}
+	}
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 750;
+		margin-bottom: 12px;
+	}
+
+	.brand img {
+		border-radius: 7px;
+	}
+
+	.about p {
+		color: var(--muted);
+		max-width: 26em;
+	}
+
+	h2 {
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--faint);
+		margin: 4px 0 14px;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 10px;
+	}
+
+	a {
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	a:hover {
+		color: var(--text);
+	}
+
+	.bottom {
+		margin-top: 40px;
+		padding-top: 20px;
+		border-top: 1px solid var(--line);
+		color: var(--faint);
+		font-size: 0.88rem;
+	}
+
+	.bottom p {
+		margin: 0;
+	}
+</style>

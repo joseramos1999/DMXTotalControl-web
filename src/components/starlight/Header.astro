@@ -1,0 +1,136 @@
+---
+// The manual's header: Starlight's (search, theme, language) plus the way
+// back to the site's own pages, in the reader's language.
+import LanguageSelect from '@astrojs/starlight/components/LanguageSelect.astro';
+import Search from '@astrojs/starlight/components/Search.astro';
+import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+import logo from '../../assets/logo.svg';
+import { navStrings, pageUrl, siteLang } from '../../i18n';
+
+const { lang } = Astro.locals.starlightRoute;
+const n = navStrings(lang);
+const site = siteLang(lang);
+const links = [
+	{ href: pageUrl('download', site), label: n.download },
+	{ href: pageUrl('news', site), label: n.news },
+	{ href: pageUrl('faq', site), label: n.faq },
+];
+---
+
+<div class="header">
+	<div class="title-wrapper sl-flex">
+		<a class="site-title sl-flex" href={pageUrl('home', site)}>
+			<img src={logo.src} width="32" height="32" alt="" />
+			<span>DMX Total Control</span>
+		</a>
+		<nav class="links" aria-label={n.menu}>
+			{links.map((l) => <a href={l.href}>{l.label}</a>)}
+		</nav>
+	</div>
+	<div class="sl-flex print:hidden">
+		<Search />
+	</div>
+	<div class="sl-hidden md:sl-flex print:hidden right-group">
+		<div class="sl-flex social-icons">
+			<SocialIcons />
+		</div>
+		<ThemeSelect />
+		<LanguageSelect />
+	</div>
+</div>
+
+<style>
+	.header {
+		display: flex;
+		gap: var(--sl-nav-gap);
+		justify-content: space-between;
+		align-items: center;
+		height: 100%;
+	}
+
+	.title-wrapper {
+		overflow: clip;
+		padding: 0.25rem;
+		margin: -0.25rem;
+		min-width: 0;
+		align-items: center;
+		gap: 1.5rem;
+	}
+
+	.site-title {
+		align-items: center;
+		gap: 0.6rem;
+		color: var(--sl-color-text);
+		font-size: var(--sl-text-h4);
+		font-weight: 700;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.site-title img {
+		border-radius: 7px;
+	}
+
+	.links {
+		display: none;
+		gap: 0.25rem;
+	}
+
+	.links a {
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		padding: 0.4rem 0.6rem;
+		border-radius: 0.4rem;
+	}
+
+	.links a:hover {
+		color: var(--sl-color-white);
+		background: var(--sl-color-gray-6);
+	}
+
+	@media (min-width: 72rem) {
+		.links {
+			display: flex;
+		}
+	}
+
+	.right-group,
+	.social-icons {
+		gap: 1rem;
+		align-items: center;
+	}
+
+	.social-icons::after {
+		content: '';
+		height: 2rem;
+		border-inline-end: 1px solid var(--sl-color-gray-5);
+	}
+
+	@media (min-width: 50rem) {
+		:global(:root[data-has-sidebar]) {
+			--__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+		}
+		:global(:root:not([data-has-toc])) {
+			--__toc-width: 0rem;
+		}
+		.header {
+			--__sidebar-width: max(0rem, var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x));
+			--__main-column-fr: calc(
+				(
+						100% + var(--__sidebar-pad, 0rem) - var(--__toc-width, var(--sl-sidebar-width)) -
+							(2 * var(--__toc-width, var(--sl-nav-pad-x))) - var(--sl-content-inline-start, 0rem) -
+							var(--sl-content-width)
+					) / 2
+			);
+			display: grid;
+			grid-template-columns:
+				minmax(calc(var(--__sidebar-width) + max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))), auto)
+				1fr
+				auto;
+			align-content: center;
+		}
+	}
+</style>

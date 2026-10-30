@@ -1,0 +1,15 @@
+---
+// Starlight's head plus the site's font and the image for social networks.
+import { Font } from 'astro:assets';
+import Default from '@astrojs/starlight/components/Head.astro';
+import { siteLang, url } from '../../i18n';
+
+const { lang } = Astro.locals.starlightRoute;
+const image = new URL(url(`/og/${siteLang(lang)}.png`), Astro.site).href;
+---
+
+<Default><slot /></Default>
+<Font cssVariable="--font-inter" preload />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />

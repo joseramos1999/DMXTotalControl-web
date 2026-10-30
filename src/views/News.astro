@@ -1,0 +1,99 @@
+---
+import { getCollection, render } from 'astro:content';
+import Site from '../layouts/Site.astro';
+import { formatDate, type Lang } from '../i18n';
+import { RELEASES_URL } from '../data/release';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+/** Newest first: 1.10.0 after 1.9.0, a beta before its final version */
+function compare(a: string, b: string) {
+	return b.localeCompare(a, 'en', { numeric: true });
+}
+
+const entries = (await getCollection('novedades', (e) => e.id.startsWith(`${lang}/`))).sort((a, b) =>
+	compare(a.data.version, b.data.version),
+);
+const notes = await Promise.all(entries.map(async (e) => ({ entry: e, ...(await render(e)) })));
+
+const copy = {
+	es: {
+		title: 'Novedades',
+		description: 'Las novedades de cada versión de DMX Total Control, el programa de control DMX libre para Windows.',
+		lead: 'Lo que trae cada versión. El programa avisa de las nuevas y se actualiza solo.',
+		all: 'Todas las versiones y sus descargas, en GitHub',
+		unreleased: 'Sin publicar todavía',
+	},
+	en: {
+		title: 'News',
+		description: 'What is new in each version of DMX Total Control, the free DMX lighting control program for Windows.',
+		lead: 'What each version brings. The program tells you about new ones and updates itself.',
+		all: 'Every version and its downloads, on GitHub',
+		unreleased: 'Not released yet',
+	},
+}[lang];
+---
+
+<Site lang={lang} route="news" title={copy.title} description={copy.description}>
+	<section class="page-head">
+		<div class="wrap narrow">
+			<h1>{copy.title}</h1>
+			<p class="lead">{copy.lead}</p>
+		</div>
+	</section>
+	<div class="wrap narrow body">
+		{
+			notes.map(({ entry, Content }) => (
+				<article class="card prose release" id={`v${entry.data.version}`}>
+					<header>
+						<h2>{entry.data.title}</h2>
+						<p class="date">
+							{entry.data.date ? (
+								<time datetime={entry.data.date}>{formatDate(entry.data.date, lang)}</time>
+							) : (
+								copy.unreleased
+							)}
+						</p>
+					</header>
+					<Content />
+				</article>
+			))
+		}
+		<p><a href={RELEASES_URL}>{copy.all}</a></p>
+	</div>
+</Site>
+
+<style>
+	.body {
+		padding-bottom: clamp(64px, 9vw, 112px);
+		display: grid;
+		gap: 20px;
+	}
+
+	.release {
+		padding: clamp(22px, 4vw, 36px);
+	}
+
+	.release header {
+		margin-bottom: 1.2em;
+	}
+
+	.release header h2 {
+		margin: 0;
+		font-size: 1.7rem;
+	}
+
+	.date {
+		color: var(--faint);
+		margin: 4px 0 0;
+	}
+
+	/* The notes use ### for their sections */
+	.release :global(h3) {
+		margin-top: 1.4em;
+	}
+</style>

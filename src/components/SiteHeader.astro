@@ -1,0 +1,184 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import logo from '../assets/logo.svg';
+import { REPO, manualUrl, navStrings, pageUrl, routes, url, type Lang, type Route } from '../i18n';
+
+interface Props {
+	lang: Lang;
+	route: Route;
+}
+
+const { lang, route } = Astro.props;
+const n = navStrings(lang);
+const other: Lang = lang === 'es' ? 'en' : 'es';
+const links = [
+	{ href: pageUrl('home', lang, '#funciones'), label: n.features },
+	{ href: manualUrl(lang), label: n.manual },
+	{ href: pageUrl('news', lang), label: n.news, current: route === 'news' },
+	{ href: pageUrl('faq', lang), label: n.faq, current: route === 'faq' },
+];
+---
+
+<header class="site-header">
+	<div class="wrap bar">
+		<a class="brand" href={pageUrl('home', lang)}>
+			<img src={logo.src} width="32" height="32" alt="" />
+			<span>DMX Total Control</span>
+		</a>
+		<nav class="links" aria-label={n.menu}>
+			{links.map((l) => <a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>)}
+		</nav>
+		<div class="right">
+			<a class="lang" href={url(routes[route][other])} hreflang={other} lang={other}>
+				<Icon name="translate" size="1.1em" />
+				{other === 'en' ? 'English' : 'Español'}
+			</a>
+			<a class="icon" href={REPO} aria-label="GitHub"><Icon name="github" size="1.35em" /></a>
+			<a class="btn btn-primary btn-sm cta" href={pageUrl('download', lang)}>
+				<Icon name="download" size="1.1em" />
+				{n.download}
+			</a>
+			<details class="menu">
+				<summary aria-label={n.menu}><Icon name="bars" size="1.5em" /></summary>
+				<div class="panel">
+					{links.map((l) => <a href={l.href}>{l.label}</a>)}
+					<a href={pageUrl('download', lang)}>{n.download}</a>
+					<a href={url(routes[route][other])} hreflang={other} lang={other}>{other === 'en' ? 'English' : 'Español'}</a>
+					<a href={REPO}>GitHub</a>
+				</div>
+			</details>
+		</div>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: rgba(11, 13, 17, 0.78);
+		backdrop-filter: saturate(160%) blur(14px);
+		-webkit-backdrop-filter: saturate(160%) blur(14px);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	}
+
+	.bar {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		height: 64px;
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 750;
+		letter-spacing: -0.01em;
+		white-space: nowrap;
+	}
+
+	.brand img {
+		border-radius: 8px;
+	}
+
+	.links {
+		display: none;
+		gap: 4px;
+	}
+
+	.links a,
+	.lang,
+	.icon {
+		color: var(--muted);
+		text-decoration: none;
+		font-size: 0.95rem;
+		font-weight: 550;
+		padding: 8px 10px;
+		border-radius: 8px;
+	}
+
+	.links a:hover,
+	.links a[aria-current='page'],
+	.lang:hover,
+	.icon:hover {
+		color: var(--text);
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.right {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.lang,
+	.icon {
+		display: none;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.cta {
+		display: none;
+	}
+
+	.menu summary {
+		list-style: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border-radius: 10px;
+		color: var(--text);
+	}
+
+	.menu summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.menu[open] summary {
+		background: var(--surface-2);
+	}
+
+	.panel {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 64px;
+		background: var(--bg-raised);
+		border-bottom: 1px solid var(--line);
+		padding: 8px var(--gutter) 16px;
+		display: grid;
+	}
+
+	.panel a {
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 550;
+		padding: 12px 4px;
+		border-bottom: 1px solid var(--line);
+	}
+
+	@media (min-width: 560px) {
+		.cta {
+			display: inline-flex;
+		}
+	}
+
+	@media (min-width: 960px) {
+		.links,
+		.lang,
+		.icon {
+			display: flex;
+		}
+		.menu {
+			display: none;
+		}
+	}
+</style>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DMX Total Control: the icon (black). Apache License 2.0 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+	<defs><mask id="cut-black">
+		<rect width="256" height="256" fill="#ffffff"/>
+		<g fill="none" stroke="#000000" stroke-width="22">
+	<path d="M44,81 H49 A35,35 0 0 1 49,151 H44 Z" stroke-linejoin="miter"/>
+	<path d="M103,81 H159 M131,81 V162" stroke-linecap="butt"/>
+	<path d="M223,81 H213 A35,35 0 0 0 213,151 H223" stroke-linecap="butt"/></g>
+		<rect x="58" y="176" width="140" height="12" rx="6" fill="#000000"/>
+	</mask></defs>
+	<rect x="8" y="8" width="240" height="240" rx="56" fill="#000000" mask="url(#cut-black)"/>
+</svg>

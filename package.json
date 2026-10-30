@@ -1,0 +1,18 @@
+{
+  "name": "dmxtotalcontrol-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "sync": "node scripts/sync-app.mjs",
+    "dev": "node scripts/sync-app.mjs && astro dev",
+    "build": "node scripts/sync-app.mjs && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.7",
+    "astro": "^7.2.10",
+    "sharp": "^0.35.3"
+  }
+}

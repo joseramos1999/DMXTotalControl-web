@@ -1,0 +1,38 @@
+/* The manual (Starlight) with the program's colours: the dark theme's
+   background and accent, and the light theme's for the light mode. */
+
+:root {
+	--sl-font: var(--font-inter), system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--sl-color-accent-low: #12274a;
+	--sl-color-accent: #3d8bfd;
+	--sl-color-accent-high: #b9d4ff;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #eef0f4;
+	--sl-color-gray-2: #c6cad3;
+	--sl-color-gray-3: #a6acb9;
+	--sl-color-gray-4: #6b7282;
+	--sl-color-gray-5: #353b48;
+	--sl-color-gray-6: #161920;
+	--sl-color-black: #0b0d11;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #d6e5ff;
+	--sl-color-accent: #1a62cc;
+	--sl-color-accent-high: #0d2f63;
+	--sl-color-white: #0b0d11;
+	--sl-color-gray-1: #161920;
+	--sl-color-gray-2: #2a2f3a;
+	--sl-color-gray-3: #4f5665;
+	--sl-color-gray-4: #7d8494;
+	--sl-color-gray-5: #c6cad3;
+	--sl-color-gray-6: #eceef2;
+	--sl-color-gray-7: #f6f7f9;
+	--sl-color-black: #ffffff;
+}
+
+/* Screenshots of the program in the manual */
+.sl-markdown-content img {
+	border-radius: 10px;
+	border: 1px solid var(--sl-color-gray-5);
+}
