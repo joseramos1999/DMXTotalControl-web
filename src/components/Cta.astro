@@ -1,0 +1,55 @@
+---
+// The closing call to download, with the latest version
+import { Icon } from '@astrojs/starlight/components';
+import { dict, fill, formatDate, formatSize, pageUrl, type Lang } from '../i18n';
+import { release } from '../data/release';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = dict(lang);
+const meta = fill(t.common.versionLine, {
+	version: release.version,
+	date: formatDate(release.date, lang),
+	size: formatSize(release.installer.size, lang),
+});
+---
+
+<section class="cta">
+	<div class="wrap">
+		<h2>{t.common.ctaTitle}</h2>
+		<p class="lead">{t.common.ctaText}</p>
+		<a class="btn btn-primary btn-lg" href={pageUrl('download', lang)}>
+			<Icon name="download" size="1.2em" />
+			{t.common.downloadFree}
+		</a>
+		<p class="meta">{meta}</p>
+	</div>
+</section>
+
+<style>
+	.cta {
+		text-align: center;
+		padding: clamp(64px, 9vw, 112px) 0;
+		border-top: 1px solid var(--line);
+		background: radial-gradient(60% 120% at 50% 0%, rgba(61, 139, 253, 0.12), transparent 70%), var(--bg-raised);
+	}
+
+	.cta .wrap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.lead {
+		margin-bottom: 24px;
+	}
+
+	.meta {
+		margin-top: 16px;
+		font-size: 0.9rem;
+		color: var(--faint);
+	}
+</style>

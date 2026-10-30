@@ -1,0 +1,165 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import Cta from '../components/Cta.astro';
+import { COMPAT_REPORT, dict, fill, html, routePaths, type Lang } from '../i18n';
+import { hardware } from '../data/hardware';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const h = dict(lang).hardware;
+---
+
+<Site lang={lang} paths={routePaths('hardware')} section="hardware" title={h.title} description={h.description}>
+	<section class="page-head">
+		<div class="wrap narrow">
+			<h1>{h.title}</h1>
+			<p class="lead">{h.lead}</p>
+			<dl class="legend">
+				<div><dt><span class="badge supported">{h.supported}</span></dt><dd>{h.supportedText}</dd></div>
+				<div><dt><span class="badge tested">{h.tested}</span></dt><dd>{h.testedText}</dd></div>
+			</dl>
+		</div>
+	</section>
+
+	<div class="wrap narrow body">
+		{
+			hardware.map((group) => (
+				<section>
+					<h2>{h.categories[group.category]}</h2>
+					<ul class="gear">
+						{group.items.map((g) => (
+							<li>
+								<div>
+									<strong>{g.name ?? h.names[g.nameKey!]}</strong>
+									<span class="muted">{h.notes[g.note]}</span>
+									{g.tested && <span class="by">{fill(h.testedBy, { name: g.tested })}</span>}
+								</div>
+								<span class={`badge ${g.tested ? 'tested' : 'supported'}`}>{g.tested ? h.tested : h.supported}</span>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
+		}
+
+		<div class="card report">
+			<h2>{h.reportTitle}</h2>
+			<p>{h.reportText}</p>
+			<a class="btn btn-primary" href={COMPAT_REPORT}>
+				<Icon name="add-document" size="1.1em" />
+				{h.reportButton}
+			</a>
+		</div>
+
+		<div class="card">
+			<h2>{h.missingTitle}</h2>
+			<p class="muted" set:html={html(h.missingText, lang)} />
+		</div>
+	</div>
+
+	<Cta lang={lang} />
+</Site>
+
+<style>
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 28px;
+		margin: 20px 0 0;
+	}
+
+	.legend div {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.legend dd {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+
+	.badge {
+		display: inline-block;
+		padding: 3px 10px;
+		border-radius: 999px;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	.badge.supported {
+		background: rgba(61, 139, 253, 0.14);
+		color: #8bb8ff;
+		border: 1px solid rgba(61, 139, 253, 0.35);
+	}
+
+	.badge.tested {
+		background: rgba(48, 164, 108, 0.16);
+		color: #5fd39a;
+		border: 1px solid rgba(48, 164, 108, 0.4);
+	}
+
+	.body {
+		display: grid;
+		gap: 32px;
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.body h2 {
+		font-size: 1.35rem;
+	}
+
+	.gear {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+		overflow: hidden;
+	}
+
+	.gear li {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		padding: 14px 18px;
+		background: var(--surface);
+	}
+
+	.gear li + li {
+		border-top: 1px solid var(--line);
+	}
+
+	.gear li > div {
+		display: grid;
+		gap: 2px;
+	}
+
+	.gear .muted {
+		font-size: 0.93rem;
+	}
+
+	.by {
+		font-size: 0.85rem;
+		color: #5fd39a;
+	}
+
+	.report {
+		background:
+			radial-gradient(120% 140% at 100% 0%, rgba(61, 139, 253, 0.16), transparent 55%),
+			var(--surface);
+		border-color: var(--line-strong);
+	}
+
+	.card p:last-child {
+		margin-bottom: 0;
+	}
+</style>

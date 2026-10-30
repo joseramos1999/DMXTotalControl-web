@@ -1,0 +1,69 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import { dict, resolveHref, routePaths, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const c = dict(lang).contribute;
+---
+
+<Site lang={lang} paths={routePaths('contribute')} title={c.title} description={c.description}>
+	<section class="page-head">
+		<div class="wrap">
+			<h1>{c.title}</h1>
+			<p class="lead">{c.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap body">
+		<div class="grid tasks">
+			{
+				c.tasks.map((task) => (
+					<div class="card">
+						<h2>{task.title}</h2>
+						<p class="muted">{task.text}</p>
+						<a class="more" href={resolveHref(task.link, lang)}>
+							{task.action} <Icon name="right-arrow" size="1em" />
+						</a>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</Site>
+
+<style>
+	.body {
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.tasks {
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	}
+
+	.tasks .card {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.tasks h2 {
+		font-size: 1.25rem;
+	}
+
+	.more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: auto;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.more:hover {
+		text-decoration: underline;
+	}
+</style>

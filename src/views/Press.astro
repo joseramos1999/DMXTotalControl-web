@@ -1,0 +1,309 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import { REPO, dict, formatDate, html, pageUrl, routePaths, url, type Lang } from '../i18n';
+import { release } from '../data/release';
+import { shot, type Shot } from '../data/shots';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = dict(lang);
+const p = t.press;
+
+// The original screenshots, to download at full size
+const originals = import.meta.glob<string>('../assets/shots/*/*.png', { eager: true, query: '?url', import: 'default' });
+const shots: { name: Shot; alt: string }[] = [
+	{ name: 'live', alt: t.home.heroAlt },
+	{ name: 'program', alt: t.features.sections.program.alt },
+	{ name: 'fx', alt: t.home.features.program.alt },
+	{ name: 'scenes', alt: t.features.sections.scenes.alt },
+	{ name: 'playbacks', alt: t.features.sections.playbacks.alt },
+	{ name: 'show', alt: t.features.sections.show.alt },
+	{ name: 'mappings', alt: t.features.sections.mappings.alt },
+	{ name: 'patch', alt: t.features.sections.patch.alt },
+	{ name: 'outputs', alt: t.features.sections.outputs.alt },
+	{ name: 'mixer', alt: t.features.sections.live.alt },
+];
+
+const site = Astro.site ?? new URL('https://joseramos1999.github.io');
+const home = new URL(pageUrl('home', lang), site).href;
+const badge = (theme: string) => url(`/marca/${p.badgeFile}-${theme}.svg`);
+const snippet = `<a href="${home}">\n  <img src="${new URL(badge('oscuro'), site).href}"\n       alt="${p.badgeAlt}" width="225" height="56">\n</a>`;
+
+const logos = [
+	{ file: 'dtc-logo-fondo-oscuro.png', label: p.logos.dark, dark: true },
+	{ file: 'dtc-logo-fondo-claro.png', label: p.logos.light, dark: false },
+	{ file: 'dtc-icono.svg', label: p.logos.icon, dark: true },
+	{ file: 'dtc-icono-512.png', label: p.logos.iconPng, dark: true },
+	{ file: 'dtc-icono-blanco.svg', label: p.logos.white, dark: true },
+	{ file: 'dtc-icono-negro.svg', label: p.logos.black, dark: false },
+];
+
+const facts = [
+	[p.facts.name, 'DMX Total Control'],
+	[p.facts.what, p.facts.whatValue],
+	[p.facts.version, `${release.version} (${formatDate(release.date, lang)})`],
+	[p.facts.license, 'Apache 2.0'],
+	[p.facts.price, p.facts.priceValue],
+	[p.facts.system, 'Windows 10, Windows 11 (64 bits)'],
+	[p.facts.languages, p.facts.languagesValue],
+	[p.facts.code, REPO.replace('https://', '')],
+];
+---
+
+<Site lang={lang} paths={routePaths('press')} title={p.title} description={p.description}>
+	<section class="page-head">
+		<div class="wrap">
+			<h1>{p.title}</h1>
+			<p class="lead">{p.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap body">
+		<section class="two">
+			<div>
+				<h2>{p.factsTitle}</h2>
+				<dl class="facts card">
+					{
+						facts.map(([k, v]) => (
+							<div>
+								<dt>{k}</dt>
+								<dd>{v}</dd>
+							</div>
+						))
+					}
+				</dl>
+			</div>
+			<div>
+				<h2>{p.textsTitle}</h2>
+				<div class="card texts">
+					<h3>{p.shortLabel}</h3>
+					<p>{p.short}</p>
+					<h3>{p.longLabel}</h3>
+					<p>{p.long}</p>
+					<p class="muted" set:html={p.nameRule} />
+				</div>
+			</div>
+		</section>
+
+		<section>
+			<h2>{p.logosTitle}</h2>
+			<div class="grid logos">
+				{
+					logos.map((l) => (
+						<a class={`card logo ${l.dark ? 'on-dark' : 'on-light'}`} href={url(`/marca/${l.file}`)} download>
+							<span class="preview">
+								<img src={url(`/marca/${l.file}`)} alt="" loading="lazy" />
+							</span>
+							<span class="label">
+								<Icon name="download" size="1em" /> {l.label}
+							</span>
+						</a>
+					))
+				}
+			</div>
+		</section>
+
+		<section id="insignia">
+			<h2>{p.badgeTitle}</h2>
+			<p class="muted">{p.badgeText}</p>
+			<div class="badges">
+				<a class="on-dark" href={badge('oscuro')} download><img src={badge('oscuro')} alt={p.badgeAlt} width="225" height="56" /><span>{p.badgeFiles.dark}</span></a>
+				<a class="on-light" href={badge('claro')} download><img src={badge('claro')} alt={p.badgeAlt} width="225" height="56" /><span>{p.badgeFiles.light}</span></a>
+			</div>
+			<pre><code>{snippet}</code></pre>
+		</section>
+
+		<section>
+			<h2>{p.shotsTitle}</h2>
+			<p class="muted">{p.shotsText}</p>
+			<div class="grid shots">
+				{
+					shots.map((s) => (
+						<a class="shot" href={originals[`../assets/shots/${lang}/${s.name}.png`]} download={`dmx-total-control-${s.name}-${lang}.png`}>
+							<Image src={shot(lang, s.name)} alt={s.alt} widths={[400, 640]} sizes="(min-width: 900px) 380px, 100vw" />
+						</a>
+					))
+				}
+			</div>
+		</section>
+
+		<section>
+			<h2>{p.contactTitle}</h2>
+			<p set:html={html(p.contact, lang)} />
+		</section>
+	</div>
+</Site>
+
+<style>
+	.body {
+		display: grid;
+		gap: clamp(40px, 6vw, 64px);
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.body h2 {
+		font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+		scroll-margin-top: 88px;
+	}
+
+	/* Grid items would otherwise grow to the width of the code snippet */
+	.body > section,
+	.two > div {
+		min-width: 0;
+	}
+
+	.facts dd {
+		overflow-wrap: anywhere;
+	}
+
+	.two {
+		display: grid;
+		gap: 32px;
+	}
+
+	@media (min-width: 960px) {
+		.two {
+			grid-template-columns: 1fr 1.3fr;
+		}
+	}
+
+	.facts {
+		margin: 0;
+		display: grid;
+		gap: 12px;
+	}
+
+	.facts div {
+		display: grid;
+		gap: 2px;
+	}
+
+	.facts dt {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--faint);
+	}
+
+	.facts dd {
+		margin: 0;
+	}
+
+	.texts h3 {
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--faint);
+		margin-bottom: 6px;
+	}
+
+	.texts p:last-child {
+		margin-bottom: 0;
+	}
+
+	.logos {
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	}
+
+	.logo {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 16px;
+		color: var(--text);
+		text-decoration: none;
+	}
+
+	.preview {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 110px;
+		border-radius: 8px;
+		padding: 12px;
+	}
+
+	.on-dark .preview {
+		background: #0b0d11;
+	}
+
+	.on-light .preview {
+		background: #f3f4f7;
+	}
+
+	.preview img {
+		max-height: 86px;
+		width: auto;
+	}
+
+	.label {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-weight: 600;
+		font-size: 0.92rem;
+	}
+
+	.badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.badges a {
+		display: grid;
+		gap: 8px;
+		justify-items: center;
+		padding: 16px 20px;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--line);
+		color: var(--muted);
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+
+	.badges a.on-dark {
+		background: #0b0d11;
+	}
+
+	.badges a.on-light {
+		background: #f3f4f7;
+		color: #4f5665;
+	}
+
+	pre {
+		margin: 0;
+		overflow-x: auto;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+		padding: 14px 16px;
+	}
+
+	pre code {
+		background: none;
+		border: 0;
+		padding: 0;
+		white-space: pre;
+	}
+
+	.shots {
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	}
+
+	.shots .shot {
+		display: block;
+		transition: transform 0.15s;
+	}
+
+	.shots .shot:hover {
+		transform: translateY(-2px);
+	}
+</style>

@@ -1,0 +1,200 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import Cta from '../components/Cta.astro';
+import { GUIDES, dict, guidePath, manualUrl, pageUrl, routePaths, url, type Guide, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const l = dict(lang).learn;
+const entries = await getCollection('guias', (e) => e.id.startsWith(`${lang}/`));
+const guides = GUIDES.map((g) => ({ key: g, entry: entries.find((e) => e.id === `${lang}/${g}`) })).filter(
+	(g): g is { key: Guide; entry: NonNullable<typeof g.entry> } => Boolean(g.entry),
+);
+---
+
+<Site lang={lang} paths={routePaths('learn')} section="learn" title={l.title} description={l.description}>
+	<section class="page-head">
+		<div class="wrap">
+			<h1>{l.title}</h1>
+			<p class="lead">{l.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap body">
+		<section>
+			<h2>{l.stepsTitle}</h2>
+			<ol class="steps">
+				{
+					l.steps.map((s, i) => (
+						<li class="card">
+							<span class="num">{i + 1}</span>
+							<h3>{s.title}</h3>
+							<p class="muted">{s.text}</p>
+							{i === 0 && (
+								<a class="btn btn-primary btn-sm" href={pageUrl('download', lang)}>
+									<Icon name="download" size="1em" />
+									{dict(lang).nav.download}
+								</a>
+							)}
+						</li>
+					))
+				}
+			</ol>
+		</section>
+
+		<section>
+			<h2>{l.guidesTitle}</h2>
+			<p class="muted">{l.guidesText}</p>
+			<div class="grid grid-2">
+				{
+					guides.map((g) => (
+						<a class="card guide" href={url(guidePath(g.key, lang))}>
+							<h3>{g.entry.data.title}</h3>
+							<p class="muted">{g.entry.data.description}</p>
+							<span class="more">
+								{dict(lang).common.readMore} <Icon name="right-arrow" size="1em" />
+							</span>
+						</a>
+					))
+				}
+			</div>
+		</section>
+
+		<section>
+			<h2>{l.examplesTitle}</h2>
+			<p class="muted">{l.examplesText}</p>
+			<ul class="examples">
+				{
+					l.examples.map((e) => (
+						<li>
+							<strong>«{e.name}»</strong>
+							<span class="muted">{e.text}</span>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section class="card manual">
+			<Icon name="open-book" size="1.6em" />
+			<div>
+				<h2>{l.manualTitle}</h2>
+				<p class="muted">{l.manualText}</p>
+				<a class="btn btn-ghost" href={manualUrl(lang)}>{l.manualButton} <Icon name="right-arrow" size="1em" /></a>
+			</div>
+		</section>
+	</div>
+
+	<Cta lang={lang} />
+</Site>
+
+<style>
+	.body {
+		display: grid;
+		gap: clamp(40px, 6vw, 64px);
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.body h2 {
+		font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+	}
+
+	.steps {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 16px;
+	}
+
+	@media (min-width: 900px) {
+		.steps {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.steps li {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.num {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		background: var(--brand);
+		color: #fff;
+		font-weight: 800;
+		margin-bottom: 12px;
+	}
+
+	.steps .btn {
+		margin-top: auto;
+	}
+
+	a.card.guide {
+		display: flex;
+		flex-direction: column;
+		color: inherit;
+		text-decoration: none;
+		transition:
+			border-color 0.15s,
+			transform 0.15s;
+	}
+
+	a.card.guide:hover {
+		border-color: var(--line-strong);
+		transform: translateY(-2px);
+	}
+
+	.guide .more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: auto;
+		color: var(--accent-hover);
+		font-weight: 600;
+	}
+
+	.examples {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 10px;
+	}
+
+	.examples li {
+		display: grid;
+		gap: 2px;
+		padding: 14px 18px;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+	}
+
+	.manual {
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+	}
+
+	.manual > :global(svg) {
+		flex: none;
+		color: var(--accent-hover);
+		margin-top: 6px;
+	}
+
+	.manual h2 {
+		margin-top: 0;
+	}
+</style>

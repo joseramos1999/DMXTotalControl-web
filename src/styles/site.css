@@ -412,3 +412,8 @@ kbd {
 .note p:last-child {
 	margin-bottom: 0;
 }
+
+/* A code line inside a note scrolls instead of widening the page */
+.note > div {
+	min-width: 0;
+}

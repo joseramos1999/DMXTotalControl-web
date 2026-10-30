@@ -1,0 +1,12 @@
+---
+import View from '../../../views/Press.astro';
+import { PREFIXED, type Lang } from '../../../i18n';
+
+export function getStaticPaths() {
+	return PREFIXED.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+---
+
+<View lang={lang} />

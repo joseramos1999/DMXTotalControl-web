@@ -1,0 +1,15 @@
+---
+import View from '../../views/Segment.astro';
+import { SEGMENTS, segmentPath, type Segment } from '../../i18n';
+
+export function getStaticPaths() {
+	return SEGMENTS.map((segment) => ({
+		params: { segment: segmentPath(segment, 'es').split('/')[2] },
+		props: { segment },
+	}));
+}
+
+const { segment } = Astro.props as { segment: Segment };
+---
+
+<View lang="es" segment={segment} />

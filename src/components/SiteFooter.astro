@@ -1,15 +1,16 @@
 ---
 import logo from '../assets/logo.svg';
-import { ISSUES, REPO, manualUrl, navStrings, pageUrl, strings, type Lang } from '../i18n';
+import { ISSUES, REPO, SEGMENTS, dict, manualUrl, pageUrl, segmentPath, url, type Lang } from '../i18n';
 
 interface Props {
 	lang: Lang;
 }
 
 const { lang } = Astro.props;
-const t = strings[lang];
-const n = navStrings(lang);
+const t = dict(lang);
+const f = t.footer;
 const year = new Date().getFullYear();
+const credits = pageUrl('legal', lang, `#${t.legal.sections[3].id}`);
 ---
 
 <footer class="site-footer">
@@ -19,37 +20,47 @@ const year = new Date().getFullYear();
 				<img src={logo.src} width="28" height="28" alt="" />
 				<span>DMX Total Control</span>
 			</a>
-			<p>{t.footerAbout}</p>
+			<p>{f.about}</p>
 		</div>
 		<div>
-			<h2>{t.program}</h2>
+			<h2>{f.program}</h2>
 			<ul>
-				<li><a href={pageUrl('download', lang)}>{n.download}</a></li>
-				<li><a href={manualUrl(lang)}>{n.manual}</a></li>
-				<li><a href={pageUrl('news', lang)}>{n.news}</a></li>
-				<li><a href={pageUrl('faq', lang)}>{n.faq}</a></li>
+				<li><a href={pageUrl('download', lang)}>{t.nav.download}</a></li>
+				<li><a href={pageUrl('features', lang)}>{t.nav.features}</a></li>
+				<li><a href={pageUrl('hardware', lang)}>{t.nav.hardware}</a></li>
+				<li><a href={pageUrl('news', lang)}>{t.nav.news}</a></li>
+				<li><a href={pageUrl('roadmap', lang)}>{f.roadmap}</a></li>
 			</ul>
 		</div>
 		<div>
-			<h2>{t.community}</h2>
+			<h2>{t.nav.whoFor}</h2>
 			<ul>
-				<li><a href={REPO}>{t.source}</a></li>
-				<li><a href={ISSUES}>{t.reportBug}</a></li>
-				<li><a href={ISSUES}>{t.suggest}</a></li>
-				<li><a href={`${REPO}/blob/main/ROADMAP.md`}>{t.roadmap}</a></li>
+				{SEGMENTS.map((s) => <li><a href={url(segmentPath(s, lang))}>{t.who.segments[s].card}</a></li>)}
 			</ul>
 		</div>
 		<div>
-			<h2>{t.legalTitle}</h2>
+			<h2>{f.resources}</h2>
 			<ul>
-				<li><a href={pageUrl('legal', lang)}>{t.legal}</a></li>
-				<li><a href={pageUrl('legal', lang, lang === 'es' ? '#creditos' : '#credits')}>{t.credits}</a></li>
-				<li><a href={`${REPO}/blob/main/COPYING`}>{t.license}</a></li>
+				<li><a href={pageUrl('learn', lang)}>{t.nav.learn}</a></li>
+				<li><a href={manualUrl(lang)}>{t.nav.manual}</a></li>
+				<li><a href={pageUrl('faq', lang)}>{t.nav.faq}</a></li>
+				<li><a href={pageUrl('qlc', lang)}>{f.qlc}</a></li>
+				<li><a href={pageUrl('press', lang)}>{f.press}</a></li>
+			</ul>
+		</div>
+		<div>
+			<h2>{f.community}</h2>
+			<ul>
+				<li><a href={pageUrl('contribute', lang)}>{f.contribute}</a></li>
+				<li><a href={REPO}>{f.source}</a></li>
+				<li><a href={ISSUES}>{f.reportBug}</a></li>
+				<li><a href={pageUrl('legal', lang)}>{f.legal}</a></li>
+				<li><a href={credits}>{f.credits}</a></li>
 			</ul>
 		</div>
 	</div>
 	<div class="wrap bottom">
-		<p>© {year} DMX Total Control · {lang === 'es' ? 'Software libre bajo la licencia Apache 2.0' : 'Free software under the Apache License 2.0'}</p>
+		<p>© {year} DMX Total Control · <a href={`${REPO}/blob/main/COPYING`}>{f.licenseLine}</a></p>
 	</div>
 </footer>
 
@@ -71,9 +82,9 @@ const year = new Date().getFullYear();
 		grid-column: 1 / -1;
 	}
 
-	@media (min-width: 860px) {
+	@media (min-width: 960px) {
 		.cols {
-			grid-template-columns: 2fr 1fr 1fr 1fr;
+			grid-template-columns: 1.6fr repeat(4, 1fr);
 		}
 		.about {
 			grid-column: auto;
@@ -96,7 +107,7 @@ const year = new Date().getFullYear();
 
 	.about p {
 		color: var(--muted);
-		max-width: 26em;
+		max-width: 24em;
 	}
 
 	h2 {
@@ -134,5 +145,9 @@ const year = new Date().getFullYear();
 
 	.bottom p {
 		margin: 0;
+	}
+
+	.bottom a {
+		color: var(--faint);
 	}
 </style>

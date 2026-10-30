@@ -5,24 +5,28 @@ import { Font } from 'astro:assets';
 import '../styles/site.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { LANGS, routes, strings, url, type Lang, type Route } from '../i18n';
+import { LANGS, dict, url, type Lang } from '../i18n';
+
+export type Section = 'home' | 'features' | 'who' | 'hardware' | 'learn' | 'faq' | 'news' | 'other';
 
 interface Props {
 	lang: Lang;
-	route: Route;
+	/** this page's path in every language (without the base) */
+	paths: Record<Lang, string>;
 	title: string;
 	description: string;
+	section?: Section;
 	/** structured data (schema.org) for the page */
 	schema?: object;
 }
 
-const { lang, route, title, description, schema } = Astro.props;
-const t = strings[lang];
+const { lang, paths, title, description, section = 'other', schema } = Astro.props;
+const t = dict(lang);
 const site = Astro.site ?? new URL('https://joseramos1999.github.io');
 const absolute = (path: string) => new URL(url(path), site).href;
-const canonical = absolute(routes[route][lang]);
+const canonical = absolute(paths[lang]);
 const image = absolute(`/og/${lang}.png`);
-const fullTitle = route === 'home' ? `DMX Total Control · ${t.tagline}` : `${title} · DMX Total Control`;
+const fullTitle = section === 'home' ? `DMX Total Control · ${t.common.tagline}` : `${title} · DMX Total Control`;
 ---
 
 <!doctype html>
@@ -33,8 +37,8 @@ const fullTitle = route === 'home' ? `DMX Total Control · ${t.tagline}` : `${ti
 		<title>{fullTitle}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonical} />
-		{LANGS.map((l) => <link rel="alternate" hreflang={l} href={absolute(routes[route][l])} />)}
-		<link rel="alternate" hreflang="x-default" href={absolute(routes[route].en)} />
+		{LANGS.map((l) => <link rel="alternate" hreflang={l} href={absolute(paths[l])} />)}
+		<link rel="alternate" hreflang="x-default" href={absolute(paths.en)} />
 		<link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
 		<link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
 		<meta name="theme-color" content="#0b0d11" />
@@ -46,14 +50,14 @@ const fullTitle = route === 'home' ? `DMX Total Control · ${t.tagline}` : `${ti
 		<meta property="og:image" content={image} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+		<meta property="og:locale" content={t.meta.og} />
 		<meta name="twitter:card" content="summary_large_image" />
 		<Font cssVariable="--font-inter" preload />
 		{schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 	</head>
 	<body>
-		<a class="skip" href="#main">{t.skip}</a>
-		<SiteHeader lang={lang} route={route} />
+		<a class="skip" href="#main">{t.common.skip}</a>
+		<SiteHeader lang={lang} paths={paths} section={section} />
 		<main id="main">
 			<slot />
 		</main>

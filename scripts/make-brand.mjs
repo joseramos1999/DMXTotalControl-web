@@ -102,6 +102,10 @@ await logo('dtc-logo-fondo-claro.png', LIGHT_TEXT);
 const badges = {
 	es: { small: 'Hecho con', file: 'hecho-con-dtc' },
 	en: { small: 'Made with', file: 'made-with-dtc' },
+	pt: { small: 'Feito com', file: 'feito-com-dtc' },
+	fr: { small: 'Fait avec', file: 'fait-avec-dtc' },
+	it: { small: 'Fatto con', file: 'fatto-con-dtc' },
+	de: { small: 'Gemacht mit', file: 'gemacht-mit-dtc' },
 };
 for (const [lang, b] of Object.entries(badges)) {
 	for (const theme of ['oscuro', 'claro']) {

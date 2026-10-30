@@ -17,4 +17,12 @@ export const collections = {
 			date: z.string().optional(),
 		}),
 	}),
+	// Beginner guides: <lang>/<guide>.md, the guide being dmx, connect, network or interface
+	guias: defineCollection({
+		loader: glob({ pattern: '*/*.md', base: './src/content/guias' }),
+		schema: z.object({
+			title: z.string(),
+			description: z.string(),
+		}),
+	}),
 };

@@ -1,69 +1,52 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Site from '../layouts/Site.astro';
-import { formatDate, type Lang } from '../i18n';
-import { RELEASES_URL } from '../data/release';
+import { RELEASES, dict, formatDate, routePaths, type Lang } from '../i18n';
 
 interface Props {
 	lang: Lang;
 }
 
 const { lang } = Astro.props;
+const n = dict(lang).news;
 
 /** Newest first: 1.10.0 after 1.9.0, a beta before its final version */
 function compare(a: string, b: string) {
 	return b.localeCompare(a, 'en', { numeric: true });
 }
 
-const entries = (await getCollection('novedades', (e) => e.id.startsWith(`${lang}/`))).sort((a, b) =>
+// Notes are written in Spanish (with the program) and English; the other
+// languages show the English ones.
+const notesLang = lang === 'es' || lang === 'en' ? lang : 'en';
+const entries = (await getCollection('novedades', (e) => e.id.startsWith(`${notesLang}/`))).sort((a, b) =>
 	compare(a.data.version, b.data.version),
 );
 const notes = await Promise.all(entries.map(async (e) => ({ entry: e, ...(await render(e)) })));
-
-const copy = {
-	es: {
-		title: 'Novedades',
-		description: 'Las novedades de cada versión de DMX Total Control, el programa de control DMX libre para Windows.',
-		lead: 'Lo que trae cada versión. El programa avisa de las nuevas y se actualiza solo.',
-		all: 'Todas las versiones y sus descargas, en GitHub',
-		unreleased: 'Sin publicar todavía',
-	},
-	en: {
-		title: 'News',
-		description: 'What is new in each version of DMX Total Control, the free DMX lighting control program for Windows.',
-		lead: 'What each version brings. The program tells you about new ones and updates itself.',
-		all: 'Every version and its downloads, on GitHub',
-		unreleased: 'Not released yet',
-	},
-}[lang];
 ---
 
-<Site lang={lang} route="news" title={copy.title} description={copy.description}>
+<Site lang={lang} paths={routePaths('news')} section="news" title={n.title} description={n.description}>
 	<section class="page-head">
 		<div class="wrap narrow">
-			<h1>{copy.title}</h1>
-			<p class="lead">{copy.lead}</p>
+			<h1>{n.title}</h1>
+			<p class="lead">{n.lead}</p>
+			{notesLang !== lang && <p class="muted">{n.inEnglish}</p>}
 		</div>
 	</section>
 	<div class="wrap narrow body">
 		{
 			notes.map(({ entry, Content }) => (
-				<article class="card prose release" id={`v${entry.data.version}`}>
+				<article class="card prose release" id={`v${entry.data.version}`} lang={notesLang}>
 					<header>
 						<h2>{entry.data.title}</h2>
 						<p class="date">
-							{entry.data.date ? (
-								<time datetime={entry.data.date}>{formatDate(entry.data.date, lang)}</time>
-							) : (
-								copy.unreleased
-							)}
+							{entry.data.date ? <time datetime={entry.data.date}>{formatDate(entry.data.date, lang)}</time> : n.unreleased}
 						</p>
 					</header>
 					<Content />
 				</article>
 			))
 		}
-		<p><a href={RELEASES_URL}>{copy.all}</a></p>
+		<p><a href={RELEASES}>{n.all}</a></p>
 	</div>
 </Site>
 

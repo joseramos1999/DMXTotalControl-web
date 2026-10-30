@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import View from '../../../views/Guide.astro';
+import { GUIDES, PREFIXED, guideSlug, type Guide, type Lang } from '../../../i18n';
+
+export async function getStaticPaths() {
+	const written = await getCollection('guias');
+	return PREFIXED.flatMap((lang) =>
+		GUIDES.filter((g) => written.some((e) => e.id === `${lang}/${g}`)).map((guide) => ({
+			params: { lang, guide: guideSlug(guide, lang) },
+			props: { guide },
+		})),
+	);
+}
+
+const lang = Astro.params.lang as Lang;
+const { guide } = Astro.props as { guide: Guide };
+---
+
+<View lang={lang} guide={guide} />

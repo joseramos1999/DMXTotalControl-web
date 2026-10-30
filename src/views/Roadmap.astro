@@ -1,0 +1,116 @@
+---
+// A summary of ROADMAP.md in the program's repository: update it when a
+// version is published or the plans change.
+import Site from '../layouts/Site.astro';
+import { REPO, dict, html, routePaths, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const r = dict(lang).roadmap;
+---
+
+<Site lang={lang} paths={routePaths('roadmap')} title={r.title} description={r.description}>
+	<section class="page-head">
+		<div class="wrap">
+			<h1>{r.title}</h1>
+			<p class="lead">{r.lead} <a href={`${REPO}/blob/main/ROADMAP.md`}>{r.full}</a>.</p>
+		</div>
+	</section>
+
+	<div class="wrap body">
+		<div class="columns">
+			{
+				r.columns.map((col, i) => (
+					<section class={`card col col-${i}`}>
+						<span class="subtitle">{col.subtitle}</span>
+						<h2>{col.title}</h2>
+						<ul class={i === 0 ? 'ticks' : ''}>
+							{col.items.map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</section>
+				))
+			}
+		</div>
+
+		<section class="out">
+			<h2>{r.outTitle}</h2>
+			<ul>
+				{r.out.map((o) => <li>{o}</li>)}
+			</ul>
+		</section>
+
+		<p class="lead" set:html={html(r.idea, lang)} />
+	</div>
+</Site>
+
+<style>
+	.body {
+		display: grid;
+		gap: 40px;
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.columns {
+		display: grid;
+		gap: 16px;
+	}
+
+	@media (min-width: 960px) {
+		.columns {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.col {
+		border-top: 3px solid var(--accent);
+	}
+
+	.col-1 {
+		border-top-color: var(--purple);
+	}
+
+	.col-2 {
+		border-top-color: var(--line-strong);
+	}
+
+	.subtitle {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--faint);
+	}
+
+	.col h2 {
+		font-size: 1.4rem;
+		margin-top: 4px;
+	}
+
+	.col ul:not(.ticks) {
+		margin: 0;
+		padding-left: 1.2em;
+		display: grid;
+		gap: 10px;
+	}
+
+	.col ul:not(.ticks) li::marker {
+		color: var(--faint);
+	}
+
+	.out h2 {
+		font-size: 1.3rem;
+	}
+
+	.out ul {
+		color: var(--muted);
+		padding-left: 1.2em;
+		display: grid;
+		gap: 8px;
+		margin: 0;
+	}
+</style>

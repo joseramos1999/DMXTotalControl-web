@@ -1,0 +1,167 @@
+---
+// One page per audience (DJs, bands, theatre, schools, venues)
+import { Image } from 'astro:assets';
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import Cta from '../components/Cta.astro';
+import { SEGMENTS, dict, fill, html, pageUrl, segmentPath, segmentPaths, url, type Lang, type Segment } from '../i18n';
+import { shot } from '../data/shots';
+import { segmentLook } from '../data/segments';
+
+interface Props {
+	lang: Lang;
+	segment: Segment;
+}
+
+const { lang, segment } = Astro.props;
+const t = dict(lang);
+const w = t.who;
+const s = w.segments[segment];
+const others = SEGMENTS.filter((o) => o !== segment);
+const teachers = 'teachers' in s ? (s.teachers as string) : '';
+---
+
+<Site lang={lang} paths={segmentPaths(segment)} section="who" title={s.title} description={s.description}>
+	<section class="page-head head">
+		<div class="wrap">
+			<span class="eyebrow">{w.eyebrow} · {s.card}</span>
+			<h1>{s.title}</h1>
+			<p class="lead">{s.lead}</p>
+			<div class="actions">
+				<a class="btn btn-primary btn-lg" href={pageUrl('download', lang)}>
+					<Icon name="download" size="1.2em" />
+					{t.common.downloadFree}
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<div class="wrap body">
+		<div class="top">
+			<div class="shot">
+				<Image src={shot(lang, segmentLook[segment].shot)} alt="" widths={[480, 800, 1100]} sizes="(min-width: 1040px) 720px, 100vw" />
+			</div>
+			<div class="card needs">
+				<h2>{w.needTitle}</h2>
+				<ul class="ticks">
+					{s.needs.map((n) => <li>{n}</li>)}
+				</ul>
+			</div>
+		</div>
+
+		<h2 class="how-title">{w.howTitle}</h2>
+		<div class="grid grid-2">
+			{
+				s.how.map((h) => (
+					<div class="card">
+						<h3>{h.title}</h3>
+						<p class="muted">{h.text}</p>
+					</div>
+				))
+			}
+		</div>
+
+		<div class="card example">
+			<Icon name="rocket" size="1.4em" />
+			<div>
+				<h2>{w.exampleTitle}</h2>
+				<p set:html={fill(w.exampleText, { name: s.example })} />
+				<p class="muted">{s.exampleText}</p>
+				{teachers && <p set:html={html(teachers, lang)} />}
+			</div>
+		</div>
+
+		<nav class="others" aria-label={w.othersTitle}>
+			<h2>{w.othersTitle}</h2>
+			<div class="other-links">
+				{
+					others.map((o) => (
+						<a href={url(segmentPath(o, lang))}>
+							<Icon name={segmentLook[o].icon} size="1.1em" />
+							{w.segments[o].card}
+						</a>
+					))
+				}
+			</div>
+		</nav>
+	</div>
+
+	<Cta lang={lang} />
+</Site>
+
+<style>
+	.head .actions {
+		margin-top: 20px;
+	}
+
+	.body {
+		display: grid;
+		gap: 28px;
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.top {
+		display: grid;
+		gap: 24px;
+		align-items: start;
+	}
+
+	@media (min-width: 1040px) {
+		.top {
+			grid-template-columns: 7fr 4fr;
+		}
+	}
+
+	.needs h2,
+	.example h2,
+	.others h2 {
+		font-size: 1.25rem;
+	}
+
+	.how-title {
+		margin: 24px 0 0;
+		font-size: 1.6rem;
+	}
+
+	.example {
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		background:
+			radial-gradient(120% 140% at 100% 0%, rgba(174, 62, 201, 0.14), transparent 55%),
+			var(--surface);
+	}
+
+	.example > :global(svg) {
+		flex: none;
+		color: var(--accent-hover);
+		margin-top: 4px;
+	}
+
+	.example p:last-child {
+		margin-bottom: 0;
+	}
+
+	.other-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.other-links a {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 14px;
+		border-radius: 999px;
+		background: var(--surface);
+		border: 1px solid var(--line-strong);
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.other-links a:hover {
+		background: var(--surface-2);
+	}
+</style>

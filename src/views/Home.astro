@@ -2,230 +2,30 @@
 import { Image } from 'astro:assets';
 import { Icon } from '@astrojs/starlight/components';
 import Site from '../layouts/Site.astro';
-import { ISSUES, REPO, formatDate, formatSize, manualUrl, pageUrl, type Lang } from '../i18n';
+import { REPO, SEGMENTS, dict, fill, formatDate, formatSize, html, manualUrl, pageUrl, routePaths, segmentPath, url, type Lang } from '../i18n';
 import { release } from '../data/release';
 import { shot, type Shot } from '../data/shots';
+import { segmentLook } from '../data/segments';
 
 interface Props {
 	lang: Lang;
 }
 
 const { lang } = Astro.props;
-const date = formatDate(release.date, lang);
+const t = dict(lang);
+const h = t.home;
 const size = formatSize(release.installer.size, lang);
+const meta = fill(t.common.versionLine, { version: release.version, date: formatDate(release.date, lang), size });
 
-const copy = {
-	es: {
-		title: 'DMX Total Control',
-		description:
-			'Programa DMX gratis y libre para Windows: escenas por grupos, programador con paletas y FX, playbacks, tu propia pantalla de show y el móvil como mando. Sin licencias ni llaves USB.',
-		eyebrow: 'Libre y gratuito · Windows 10 y 11',
-		h1a: 'Control DMX gratis,',
-		h1b: 'pensado para el directo',
-		lead: 'Lanza escenas por grupos con un botón, programa rápido con paletas y FX, y monta tu propia pantalla de show, también en el móvil. Sin licencias, sin llaves USB y sin cuenta.',
-		download: 'Descargar gratis',
-		manual: 'Ver el manual',
-		meta: `Versión ${release.version} · ${date} · ${size}`,
-		heroAlt: 'La página Directo de DMX Total Control: tres grupos de escenas (colores, efectos y generales) con su master',
-		proof: ['Sin licencia ni suscripción', 'Sin llave USB', 'Sin cuenta ni registro', 'Sin límite de universos', 'Código abierto'],
-		featuresEyebrow: 'Funciones',
-		featuresTitle: 'Todo lo del bolo, en un solo programa',
-		featuresLead: 'Del patch al último cue: programar, lanzar y operar, con el ratón, una pantalla táctil, una controladora o el móvil.',
-		more: 'En el manual',
-		features: [
-			{
-				shot: 'mixer',
-				page: 'directo',
-				title: 'Directo por grupos',
-				text: 'Las escenas se ordenan en grupos que suenan a la vez. En un grupo exclusivo solo suena una: pulsas otra y hace crossfade. Cada grupo tiene su master y su fundido, y las prioridades deciden quién manda.',
-				points: ['GO y Stop, BeatGO al ritmo y Pulso con la entrada de audio', 'Mezclador en vivo: dimmer, color, estrobo, Full y Blackout', 'Gran master y blackout siempre a mano'],
-				alt: 'El mezclador en vivo de la página Directo, por grupo de fixtures',
-			},
-			{
-				shot: 'fx',
-				page: 'programar',
-				title: 'Programar, con FX y paletas',
-				text: 'Seleccionas fixtures y les das dimmer, color, posición o cualquier canal. FX por parámetro con macros listas (círculo, ocho, ola de dimmer, arcoíris…), paletas que las escenas siguen por referencia y una línea de comandos.',
-				points: ['Selección en el plano 2D, abanicos, ciego, resaltar y localizar', '«1 THRU 8 @ FULL» con teclado en pantalla', 'Cada luminaria con su forma, tamaño y sentido sobre el mismo reloj'],
-				alt: 'Un FX de pan y tilt en la página Programar, con sus macros',
-			},
-			{
-				shot: 'scenes',
-				page: 'escenas',
-				title: 'Escenas, super escenas y cuelists',
-				text: 'Escenas estáticas, con pasos o con FX, super escenas con línea de tiempo y audio, y cuelists con tracking: cada cue guarda solo lo que cambia.',
-				points: ['Carpetas por canción', 'Disparo por GO, BeatGO o Pulso', 'Exportar e importar escenas entre shows'],
-				alt: 'Una cuelist con sus cues y lo que cambia cada uno',
-			},
-			{
-				shot: 'playbacks',
-				page: 'playbacks',
-				title: 'Playbacks como en una mesa',
-				text: 'Páginas de faders con GO, pausa y flash para tus cuelists y escenas. Con plantillas para Akai APC mini, APC mini mk2 y APC40 mkII, LEDs incluidos.',
-				points: ['Varias páginas de playbacks', 'Grabar directamente en un playback', 'Cualquier controladora MIDI u OSC con el modo Mapear'],
-				alt: 'La página Playbacks con una cuelist por canción',
-			},
-			{
-				shot: 'show',
-				page: 'show',
-				title: 'Tu SHOW, también en el móvil',
-				text: 'Monta tu propia pantalla táctil con botones, faders, diales, rueda de color, reloj y paneles de grupo. Ábrela en el móvil o la tablet por wifi, con PIN, y bloquéala para que nadie toque lo que no debe.',
-				points: ['Secciones que se dividen y se llenan solas', 'Cualquier control del programa, a un Alt+clic', 'Sin instalar nada en el móvil'],
-				alt: 'Una pantalla de SHOW con grupos, masters, GO y reloj',
-			},
-			{
-				shot: 'patch',
-				page: 'patch',
-				title: 'Patch y bibliotecas',
-				text: 'Miles de fixtures incluidos, la Open Fixture Library y la importación de GDTF. Universos, grupos de fixtures, plano 2D, límites y matrices LED. Y un creador de fixtures para lo que falte.',
-				points: ['Siguiente dirección libre y redireccionar en bloque', 'Identificar fixtures, que parpadean', 'Importar fixtures de otro show'],
-				alt: 'El plano 2D del patch con PAR, spots y washes',
-			},
-		] as { shot: Shot; page: string; title: string; text: string; points: string[]; alt: string }[],
-		whoEyebrow: 'Para quién',
-		whoTitle: 'Para quien hace luces de verdad',
-		who: [
-			{ icon: 'star', title: 'DJs y fiestas', text: 'Una APC mini, unos PAR y una interfaz DMX USB barata. BeatGO y Pulso llevan las escenas al ritmo de la música.' },
-			{ icon: 'rocket', title: 'Bandas y bolos', text: 'Un grupo o una cuelist por canción, y el SHOW en la tablet para llevar las luces desde el escenario.' },
-			{ icon: 'open-book', title: 'Teatro y escuelas', text: 'Cuelists con GO, como en una mesa de teatro. Gratis para cada alumno y cada aula, y en su idioma.' },
-			{ icon: 'puzzle', title: 'Salas y festivales', text: 'Art-Net y sACN para muchos universos, cabezas móviles con paletas y FX, y un DMX que no se corta aunque el programa esté ocupado.' },
-		] as const,
-		hwEyebrow: 'Hardware',
-		hwTitle: 'Funciona con lo que ya tienes',
-		hw: [
-			{ title: 'Interfaces DMX USB', text: 'Enttec Open DMX USB y DMX USB Pro, Eurolite, DMXKing, uDMX, Peperoni y otras compatibles.' },
-			{ title: 'Red', text: 'Art-Net y sACN (E1.31) para nodos, consolas y visualizadores.' },
-			{ title: 'Controladoras', text: 'Akai APC mini, APC mini mk2 y APC40 mkII con plantillas y LEDs. Cualquier MIDI u OSC, la entrada DMX y el teclado con el modo Mapear.' },
-			{ title: 'Móvil y tablet', text: 'Tu SHOW en el navegador, por wifi, sin instalar nada.' },
-		],
-		hwNote: 'Lo seguimos probando con más equipos. Si algo no funciona con el tuyo,',
-		hwNoteLink: 'cuéntanoslo',
-		langEyebrow: 'En tu idioma',
-		langTitle: 'Con ayuda desde el primer minuto',
-		langItems: [
-			'El manual completo en los seis idiomas, dentro del programa (F12) y en esta web',
-			'Una guía de primeros pasos que te lleva de la mano en cinco pasos',
-			'Shows de ejemplo para abrir y probar sin montar nada',
-			'Temas oscuro, claro, de alto contraste y nocturno, y la interfaz de 80 % a 150 %',
-		],
-		openEyebrow: 'Libre y abierto',
-		openTitle: 'Tus luces, tus shows, tu programa',
-		open: [
-			{ title: 'Código abierto', text: 'Bajo la licencia Apache 2.0: úsalo también en trabajos de pago, estúdialo y mejóralo.' },
-			{ title: 'Formato abierto', text: 'Los shows se guardan en .qxw, compatible con QLC+: abre tus shows de QLC+ tal cual.' },
-			{ title: 'Se actualiza solo', text: 'Avisa de cada versión nueva y la instala después de comprobar su huella SHA-256.' },
-		],
-		source: 'Ver el código',
-		roadmap: 'Hoja de ruta',
-		ctaTitle: 'Pruébalo en tu próximo bolo',
-		ctaText: 'Gratis, sin registro y listo en un minuto.',
-	},
-	en: {
-		title: 'DMX Total Control',
-		description:
-			'Free and open-source DMX software for Windows: scenes by groups, a programmer with palettes and FX, playbacks, your own show screen and your phone as a remote. No licences, no USB keys.',
-		eyebrow: 'Free and open source · Windows 10 and 11',
-		h1a: 'Free DMX control,',
-		h1b: 'made for live shows',
-		lead: 'Fire scenes by groups with one button, program fast with palettes and FX, and build your own show screen, on your phone too. No licences, no USB keys, no account.',
-		download: 'Download free',
-		manual: 'Read the manual',
-		meta: `Version ${release.version} · ${date} · ${size}`,
-		heroAlt: 'The Live page of DMX Total Control: three scene groups (colours, effects and general) with their masters',
-		proof: ['No licence or subscription', 'No USB key', 'No account', 'No universe limit', 'Open source'],
-		featuresEyebrow: 'Features',
-		featuresTitle: 'Everything for the gig, in one program',
-		featuresLead: 'From the patch to the last cue: program, fire and run the show with the mouse, a touch screen, a controller or your phone.',
-		more: 'In the manual',
-		features: [
-			{
-				shot: 'mixer',
-				page: 'directo',
-				title: 'Live, by groups',
-				text: 'Scenes sit in groups that play side by side. In an exclusive group only one plays at a time: press another and it crossfades. Each group has its master and fade time, and priorities decide who wins.',
-				points: ['GO and Stop, BeatGO on the beat and Pulse from the audio input', 'Live mixer: dimmer, colour, strobe, Full and Blackout', 'Grand master and blackout always at hand'],
-				alt: 'The live mixer of the Live page, per fixture group',
-			},
-			{
-				shot: 'fx',
-				page: 'programar',
-				title: 'Programming, with FX and palettes',
-				text: 'Select fixtures and give them dimmer, colour, position or any channel. Per-parameter FX with ready macros (circle, eight, dimmer wave, rainbow…), palettes that scenes follow by reference and a command line.',
-				points: ['Select on the 2D plan, fans, blind, highlight and locate', '“1 THRU 8 @ FULL” with an on-screen keypad', 'Each fixture with its own shape, size and direction on one clock'],
-				alt: 'A pan and tilt FX on the Program page, with its macros',
-			},
-			{
-				shot: 'scenes',
-				page: 'escenas',
-				title: 'Scenes, super scenes and cuelists',
-				text: 'Static scenes, step scenes and FX, super scenes with a timeline and audio, and cuelists with tracking: each cue stores only what changes.',
-				points: ['Folders by song', 'Triggered by GO, BeatGO or Pulse', 'Export and import scenes between shows'],
-				alt: 'A cuelist with its cues and what each one changes',
-			},
-			{
-				shot: 'playbacks',
-				page: 'playbacks',
-				title: 'Playbacks, like a console',
-				text: 'Pages of faders with GO, pause and flash for your cuelists and scenes. With templates for the Akai APC mini, APC mini mk2 and APC40 mkII, LEDs included.',
-				points: ['Several playback pages', 'Record straight into a playback', 'Any MIDI or OSC controller with Learn mode'],
-				alt: 'The Playbacks page with one cuelist per song',
-			},
-			{
-				shot: 'show',
-				page: 'show',
-				title: 'Your SHOW, on your phone too',
-				text: 'Build your own touch screen with buttons, faders, dials, a colour wheel, a clock and group panels. Open it on a phone or tablet over wifi, with a PIN, and lock it so nobody touches what they shouldn’t.',
-				points: ['Sections that split and fill themselves', 'Any control of the program, one Alt+click away', 'Nothing to install on the phone'],
-				alt: 'A SHOW screen with groups, masters, GO and a clock',
-			},
-			{
-				shot: 'patch',
-				page: 'patch',
-				title: 'Patch and fixture libraries',
-				text: 'Thousands of fixtures included, the Open Fixture Library and GDTF import. Universes, fixture groups, a 2D plan, limits and LED matrices. And a fixture editor for anything missing.',
-				points: ['Next free address and bulk re-addressing', 'Identify fixtures, which blink', 'Import fixtures from another show'],
-				alt: 'The 2D plan of the patch with PARs, spots and washes',
-			},
-		] as { shot: Shot; page: string; title: string; text: string; points: string[]; alt: string }[],
-		whoEyebrow: 'Who it’s for',
-		whoTitle: 'For people who light real shows',
-		who: [
-			{ icon: 'star', title: 'DJs and parties', text: 'An APC mini, a few PARs and a cheap USB DMX interface. BeatGO and Pulse keep the scenes on the beat.' },
-			{ icon: 'rocket', title: 'Bands and gigs', text: 'A group or a cuelist per song, and the SHOW on a tablet to run the lights from the stage.' },
-			{ icon: 'open-book', title: 'Theatre and schools', text: 'Cuelists with GO, like a theatre console. Free for every student and every classroom, in their language.' },
-			{ icon: 'puzzle', title: 'Venues and festivals', text: 'Art-Net and sACN for many universes, moving heads with palettes and FX, and DMX that never stops even when the program is busy.' },
-		] as const,
-		hwEyebrow: 'Hardware',
-		hwTitle: 'Works with what you already have',
-		hw: [
-			{ title: 'USB DMX interfaces', text: 'Enttec Open DMX USB and DMX USB Pro, Eurolite, DMXKing, uDMX, Peperoni and compatible ones.' },
-			{ title: 'Network', text: 'Art-Net and sACN (E1.31) for nodes, consoles and visualisers.' },
-			{ title: 'Controllers', text: 'Akai APC mini, APC mini mk2 and APC40 mkII with templates and LEDs. Any MIDI or OSC device, DMX input and the keyboard with Learn mode.' },
-			{ title: 'Phone and tablet', text: 'Your SHOW in the browser, over wifi, with nothing to install.' },
-		],
-		hwNote: 'We keep testing it with more gear. If something doesn’t work with yours,',
-		hwNoteLink: 'tell us',
-		langEyebrow: 'In your language',
-		langTitle: 'Help from the very first minute',
-		langItems: [
-			'The full manual in all six languages, inside the program (F12) and on this site',
-			'A first-steps guide that walks you through five steps',
-			'Example shows to open and try without setting anything up',
-			'Dark, light, high-contrast and night themes, and the interface from 80% to 150%',
-		],
-		openEyebrow: 'Free and open',
-		openTitle: 'Your lights, your shows, your program',
-		open: [
-			{ title: 'Open source', text: 'Under the Apache License 2.0: use it for paid work too, study it and improve it.' },
-			{ title: 'Open format', text: 'Shows are saved as .qxw, compatible with QLC+: open your QLC+ shows as they are.' },
-			{ title: 'Updates itself', text: 'It tells you about each new version and installs it after checking its SHA-256 fingerprint.' },
-		],
-		source: 'See the code',
-		roadmap: 'Roadmap',
-		ctaTitle: 'Try it at your next gig',
-		ctaText: 'Free, no sign-up, ready in a minute.',
-	},
-}[lang];
+// Each feature row: its screenshot and its page of the manual
+const rows: { key: keyof typeof h.features; shot: Shot; page: string }[] = [
+	{ key: 'live', shot: 'mixer', page: 'directo' },
+	{ key: 'program', shot: 'fx', page: 'programar' },
+	{ key: 'scenes', shot: 'scenes', page: 'escenas' },
+	{ key: 'playbacks', shot: 'playbacks', page: 'playbacks' },
+	{ key: 'show', shot: 'show', page: 'show' },
+	{ key: 'patch', shot: 'patch', page: 'patch' },
+];
 
 const languages = ['Español', 'English', 'Português', 'Français', 'Italiano', 'Deutsch'];
 
@@ -233,7 +33,7 @@ const schema = {
 	'@context': 'https://schema.org',
 	'@type': 'SoftwareApplication',
 	name: 'DMX Total Control',
-	description: copy.description,
+	description: h.description,
 	applicationCategory: 'MultimediaApplication',
 	operatingSystem: 'Windows 10, Windows 11',
 	softwareVersion: release.version,
@@ -246,7 +46,7 @@ const schema = {
 };
 ---
 
-<Site lang={lang} route="home" title={copy.title} description={copy.description} schema={schema}>
+<Site lang={lang} paths={routePaths('home')} section="home" title="DMX Total Control" description={h.description} schema={schema}>
 	<section class="hero">
 		<div class="beams" aria-hidden="true">
 			<span class="beam b1"></span>
@@ -254,26 +54,26 @@ const schema = {
 			<span class="beam b3"></span>
 		</div>
 		<div class="wrap hero-text">
-			<span class="eyebrow">{copy.eyebrow}</span>
-			<h1>{copy.h1a} <span class="gradient-text">{copy.h1b}</span></h1>
-			<p class="lead">{copy.lead}</p>
+			<span class="eyebrow">{h.eyebrow}</span>
+			<h1>{h.h1a} <span class="gradient-text">{h.h1b}</span></h1>
+			<p class="lead">{h.lead}</p>
 			<div class="actions">
 				<a class="btn btn-primary btn-lg" href={pageUrl('download', lang)}>
 					<Icon name="download" size="1.2em" />
-					{copy.download}
+					{t.common.downloadFree}
 				</a>
 				<a class="btn btn-ghost btn-lg" href={manualUrl(lang)}>
 					<Icon name="open-book" size="1.2em" />
-					{copy.manual}
+					{h.manual}
 				</a>
 			</div>
-			<p class="meta">{copy.meta}</p>
+			<p class="meta">{meta}</p>
 		</div>
 		<div class="wrap">
 			<div class="shot hero-shot">
 				<Image
 					src={shot(lang, 'live')}
-					alt={copy.heroAlt}
+					alt={h.heroAlt}
 					widths={[640, 960, 1280, 1440]}
 					sizes="(min-width: 1240px) 1200px, 100vw"
 					loading="eager"
@@ -283,39 +83,45 @@ const schema = {
 		</div>
 	</section>
 
-	<section class="proof" aria-label={lang === 'es' ? 'Gratis de verdad' : 'Truly free'}>
+	<section class="proof" aria-label={h.proofLabel}>
 		<ul class="wrap">
-			{copy.proof.map((p) => <li>{p}</li>)}
+			{h.proof.map((p) => <li>{p}</li>)}
 		</ul>
 	</section>
 
 	<section class="section" id="funciones">
 		<div class="wrap">
 			<div class="intro">
-				<span class="eyebrow">{copy.featuresEyebrow}</span>
-				<h2>{copy.featuresTitle}</h2>
-				<p class="lead">{copy.featuresLead}</p>
+				<span class="eyebrow">{h.featuresEyebrow}</span>
+				<h2>{h.featuresTitle}</h2>
+				<p class="lead">{h.featuresLead}</p>
 			</div>
 			<div class="features">
 				{
-					copy.features.map((f, i) => (
-						<article class={`feature ${i % 2 ? 'flip' : ''}`}>
-							<div class="feature-text">
-								<h3>{f.title}</h3>
-								<p class="muted">{f.text}</p>
-								<ul class="ticks">
-									{f.points.map((p) => <li>{p}</li>)}
-								</ul>
-								<a class="more" href={manualUrl(lang, f.page)}>
-									{copy.more} <Icon name="right-arrow" size="1em" />
-								</a>
-							</div>
-							<div class="shot">
-								<Image src={shot(lang, f.shot)} alt={f.alt} widths={[480, 800, 1100]} sizes="(min-width: 1040px) 700px, 100vw" />
-							</div>
-						</article>
-					))
+					rows.map((r, i) => {
+						const f = h.features[r.key];
+						return (
+							<article class={`feature ${i % 2 ? 'flip' : ''}`}>
+								<div class="feature-text">
+									<h3>{f.title}</h3>
+									<p class="muted">{f.text}</p>
+									<ul class="ticks">
+										{f.points.map((p) => <li>{p}</li>)}
+									</ul>
+									<a class="more" href={manualUrl(lang, r.page)}>
+										{t.common.inManual} <Icon name="right-arrow" size="1em" />
+									</a>
+								</div>
+								<div class="shot">
+									<Image src={shot(lang, r.shot)} alt={f.alt} widths={[480, 800, 1100]} sizes="(min-width: 1040px) 700px, 100vw" />
+								</div>
+							</article>
+						);
+					})
 				}
+			</div>
+			<div class="actions start">
+				<a class="btn btn-ghost" href={pageUrl('features', lang)}>{h.allFeatures} <Icon name="right-arrow" size="1em" /></a>
 			</div>
 		</div>
 	</section>
@@ -323,17 +129,18 @@ const schema = {
 	<section class="section alt">
 		<div class="wrap">
 			<div class="intro">
-				<span class="eyebrow">{copy.whoEyebrow}</span>
-				<h2>{copy.whoTitle}</h2>
+				<span class="eyebrow">{h.whoEyebrow}</span>
+				<h2>{h.whoTitle}</h2>
 			</div>
-			<div class="grid grid-4">
+			<div class="grid who-grid">
 				{
-					copy.who.map((w) => (
-						<div class="card who">
-							<span class="who-icon"><Icon name={w.icon} size="1.4em" /></span>
-							<h3>{w.title}</h3>
-							<p class="muted">{w.text}</p>
-						</div>
+					SEGMENTS.map((s) => (
+						<a class="card who" href={url(segmentPath(s, lang))}>
+							<span class="who-icon"><Icon name={segmentLook[s].icon} size="1.4em" /></span>
+							<h3>{t.who.segments[s].card}</h3>
+							<p class="muted">{t.who.segments[s].cardText}</p>
+							<span class="more">{t.common.readMore} <Icon name="right-arrow" size="1em" /></span>
+						</a>
 					))
 				}
 			</div>
@@ -343,50 +150,58 @@ const schema = {
 	<section class="section">
 		<div class="wrap">
 			<div class="intro">
-				<span class="eyebrow">{copy.hwEyebrow}</span>
-				<h2>{copy.hwTitle}</h2>
+				<span class="eyebrow">{h.hwEyebrow}</span>
+				<h2>{h.hwTitle}</h2>
 			</div>
 			<div class="grid grid-2">
 				{
-					copy.hw.map((h) => (
+					h.hw.map((c) => (
 						<div class="card">
-							<h3>{h.title}</h3>
-							<p class="muted">{h.text}</p>
+							<h3>{c.title}</h3>
+							<p class="muted">{c.text}</p>
 						</div>
 					))
 				}
 			</div>
 			<p class="hw-note">
 				<Icon name="information" size="1.1em" />
-				<span>{copy.hwNote} <a href={ISSUES}>{copy.hwNoteLink}</a>.</span>
+				<span set:html={html(h.hwNote, lang)} />
 			</p>
+			<div class="actions start">
+				<a class="btn btn-ghost" href={pageUrl('hardware', lang)}>{h.hwAll} <Icon name="right-arrow" size="1em" /></a>
+			</div>
 		</div>
 	</section>
 
 	<section class="section alt">
 		<div class="wrap split">
 			<div>
-				<span class="eyebrow">{copy.langEyebrow}</span>
-				<h2>{copy.langTitle}</h2>
+				<span class="eyebrow">{h.langEyebrow}</span>
+				<h2>{h.langTitle}</h2>
 				<ul class="chips">
 					{languages.map((l) => <li>{l}</li>)}
 				</ul>
 			</div>
-			<ul class="ticks big">
-				{copy.langItems.map((item) => <li>{item}</li>)}
-			</ul>
+			<div>
+				<ul class="ticks big">
+					{h.langItems.map((item) => <li>{item}</li>)}
+				</ul>
+				<div class="actions start">
+					<a class="btn btn-ghost" href={pageUrl('learn', lang)}>{h.learnLink} <Icon name="right-arrow" size="1em" /></a>
+				</div>
+			</div>
 		</div>
 	</section>
 
 	<section class="section">
 		<div class="wrap">
 			<div class="intro">
-				<span class="eyebrow">{copy.openEyebrow}</span>
-				<h2>{copy.openTitle}</h2>
+				<span class="eyebrow">{h.openEyebrow}</span>
+				<h2>{h.openTitle}</h2>
 			</div>
 			<div class="grid grid-3">
 				{
-					copy.open.map((o) => (
+					h.open.map((o) => (
 						<div class="card">
 							<h3>{o.title}</h3>
 							<p class="muted">{o.text}</p>
@@ -394,9 +209,9 @@ const schema = {
 					))
 				}
 			</div>
-			<div class="actions">
-				<a class="btn btn-ghost" href={REPO}><Icon name="github" size="1.2em" />{copy.source}</a>
-				<a class="btn btn-ghost" href={`${REPO}/blob/main/ROADMAP.md`}><Icon name="list-format" size="1.2em" />{copy.roadmap}</a>
+			<div class="actions start">
+				<a class="btn btn-ghost" href={REPO}><Icon name="github" size="1.2em" />{h.source}</a>
+				<a class="btn btn-ghost" href={pageUrl('roadmap', lang)}><Icon name="list-format" size="1.2em" />{h.roadmap}</a>
 			</div>
 		</div>
 	</section>
@@ -407,13 +222,13 @@ const schema = {
 			<span class="beam b3"></span>
 		</div>
 		<div class="wrap">
-			<h2>{copy.ctaTitle}</h2>
-			<p class="lead">{copy.ctaText}</p>
+			<h2>{t.common.ctaTitle}</h2>
+			<p class="lead">{t.common.ctaText}</p>
 			<a class="btn btn-primary btn-lg" href={pageUrl('download', lang)}>
 				<Icon name="download" size="1.2em" />
-				{copy.download}
+				{t.common.downloadFree}
 			</a>
-			<p class="meta">{copy.meta}</p>
+			<p class="meta">{meta}</p>
 		</div>
 	</section>
 </Site>
@@ -673,6 +488,35 @@ const schema = {
 	.section .actions {
 		justify-content: flex-start;
 		margin-top: 24px;
+	}
+
+	.actions.start {
+		justify-content: flex-start;
+		margin-top: 32px;
+	}
+
+	.who-grid {
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	}
+
+	a.card.who {
+		display: flex;
+		flex-direction: column;
+		color: inherit;
+		text-decoration: none;
+		transition:
+			border-color 0.15s,
+			transform 0.15s;
+	}
+
+	a.card.who:hover {
+		border-color: var(--line-strong);
+		transform: translateY(-2px);
+	}
+
+	.who .more {
+		margin-top: auto;
+		color: var(--accent-hover);
 	}
 
 	.final {

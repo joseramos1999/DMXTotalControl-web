@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import View from '../../views/Guide.astro';
+import { GUIDES, guideSlug, type Guide } from '../../i18n';
+
+export async function getStaticPaths() {
+	const written = await getCollection('guias', (e) => e.id.startsWith('es/'));
+	return GUIDES.filter((g) => written.some((e) => e.id === `es/${g}`)).map((guide) => ({
+		params: { guide: guideSlug(guide, 'es') },
+		props: { guide },
+	}));
+}
+
+const { guide } = Astro.props as { guide: Guide };
+---
+
+<View lang="es" guide={guide} />

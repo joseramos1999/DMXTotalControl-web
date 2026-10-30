@@ -1,66 +1,19 @@
 ---
 import Site from '../layouts/Site.astro';
-import { ISSUES, REPO, manualUrl, pageUrl, type Lang } from '../i18n';
+import { dict, html, routePaths, type Lang } from '../i18n';
 
 interface Props {
 	lang: Lang;
 }
 
 const { lang } = Astro.props;
-const m = (page: string, hash = '') => manualUrl(lang, page) + hash;
-
-// Answers are HTML (links and emphasis only).
-const copy = {
-	es: {
-		title: 'Preguntas frecuentes',
-		description: 'Respuestas sobre DMX Total Control: si es gratis, qué interfaces DMX funcionan, si abre shows de QLC+, Mac y Linux, el aviso de Windows y más.',
-		lead: 'Lo que más se pregunta antes de probarlo. ¿No está la tuya?',
-		ask: 'Pregúntanos',
-		items: [
-			['¿Es gratis de verdad?', 'Sí. Todas las funciones, sin licencia, sin suscripción, sin llave USB, sin cuenta y sin límite de universos ni de tiempo. Es software libre bajo la licencia Apache 2.0: puedes usarlo también en trabajos de pago.'],
-			['¿Qué necesito para controlar mis luces?', 'Un ordenador con Windows 10 u 11 de 64 bits y una interfaz DMX USB o un nodo Art-Net o sACN conectado a tus luces. Sin interfaz también puedes programar el show y verlo en un visualizador.'],
-			['¿Funciona con mi interfaz DMX USB?', `Funciona con las interfaces habituales: Enttec Open DMX USB y DMX USB Pro, Eurolite, DMXKing, uDMX, Peperoni y otras compatibles, además de Art-Net y sACN. Aún lo estamos probando con más equipos: si la tuya da problemas, <a href="${ISSUES}">cuéntanoslo</a>. Cómo configurarla, en <a href="${m('salidas')}">Salidas</a>.`],
-			['¿Están mis fixtures en la biblioteca?', `Trae miles de definiciones, puede añadir las de la Open Fixture Library e importar archivos GDTF y <code>.qxf</code>. Si falta alguno, lo creas con el creador de fixtures. Todo en <a href="${m('fixtures')}">Fixtures</a>.`],
-			['¿Puedo abrir mis shows de QLC+?', 'Sí. Los shows se guardan en <code>.qxw</code>, el formato de QLC+, así que abres los tuyos tal cual. QLC+ también puede leer la parte del motor de los shows de DMX Total Control.'],
-			['¿Qué controladoras MIDI puedo usar?', `Las Akai APC mini, APC mini mk2 y APC40 mkII tienen plantillas con sus LEDs. Cualquier otro controlador MIDI u OSC, la entrada DMX y el teclado se asignan con el <a href="${m('mapeos', '#modo-mapear')}">modo Mapear</a>: pulsas el control en pantalla y lo mueves en tu controladora.`],
-			['¿Puedo usar el móvil o una tablet?', `Sí: tu SHOW se abre en el navegador del móvil o la tablet por wifi, sin instalar nada, y puedes protegerlo con un PIN. Consulta <a href="${m('remoto')}">Control remoto</a>.`],
-			['¿Funciona en Mac o Linux?', `Por ahora solo hay instalador para Windows. El código compila en Linux y macOS con Qt 6 (instrucciones en el <a href="${REPO}#readme">README</a>). Si lo necesitas, <a href="${ISSUES}">dínoslo</a>: nos ayuda a decidir.`],
-			['¿Por qué avisa Windows al instalarlo?', `Porque el instalador aún no está firmado con un certificado de firma de código. Pulsa «Más información» y «Ejecutar de todas formas». En la <a href="${pageUrl('download', lang)}">página de descarga</a> explicamos cómo comprobar con su huella SHA-256 que el archivo es el original.`],
-			['¿Se actualiza solo?', 'Sí. Avisa de cada versión nueva y la instala después de comprobar su huella SHA-256. Se puede desactivar en Opciones › Actualizaciones.'],
-			['¿En qué idiomas está?', 'En español, inglés, portugués, francés, italiano y alemán, con el manual completo en los seis.'],
-			['¿Puedo usarlo en mi escuela o academia?', 'Sí, sin pedir permiso y sin licencias por aula o por alumno. Cada alumno puede instalarlo también en casa.'],
-			['¿Quién lo hace y cómo se mantiene?', `Es un proyecto libre e independiente, con el código abierto en <a href="${REPO}">GitHub</a>. Su motor parte de QLC+, otro proyecto libre. Puedes ayudar informando de fallos, probándolo con tu equipo o traduciendo.`],
-			['¿Cómo informo de un fallo o propongo una idea?', `En <a href="${ISSUES}">GitHub</a>, con las plantillas de fallo y de idea. Cuéntanos qué equipo usas y, si puedes, adjunta el show.`],
-		],
-	},
-	en: {
-		title: 'Frequently asked questions',
-		description: 'Answers about DMX Total Control: whether it is free, which DMX interfaces work, opening QLC+ shows, Mac and Linux, the Windows warning and more.',
-		lead: 'What people ask most before trying it. Not here?',
-		ask: 'Ask us',
-		items: [
-			['Is it really free?', 'Yes. Every feature, with no licence, no subscription, no USB key, no account and no limit on universes or time. It is free software under the Apache License 2.0: you can use it for paid work too.'],
-			['What do I need to control my lights?', 'A computer with 64-bit Windows 10 or 11 and a USB DMX interface or an Art-Net or sACN node connected to your lights. Without an interface you can still program the show and watch it in a visualiser.'],
-			['Does it work with my USB DMX interface?', `It works with the usual interfaces: Enttec Open DMX USB and DMX USB Pro, Eurolite, DMXKing, uDMX, Peperoni and compatible ones, plus Art-Net and sACN. We are still testing it with more gear: if yours gives trouble, <a href="${ISSUES}">tell us</a>. How to set it up is in <a href="${m('salidas')}">Outputs</a>.`],
-			['Are my fixtures in the library?', `It comes with thousands of definitions, can add the Open Fixture Library and imports GDTF and <code>.qxf</code> files. If one is missing, you build it with the fixture editor. All in <a href="${m('fixtures')}">Fixtures</a>.`],
-			['Can I open my QLC+ shows?', 'Yes. Shows are saved as <code>.qxw</code>, the QLC+ format, so you open yours as they are. QLC+ can also read the engine part of DMX Total Control shows.'],
-			['Which MIDI controllers can I use?', `The Akai APC mini, APC mini mk2 and APC40 mkII have templates with their LEDs. Any other MIDI or OSC controller, DMX input and the keyboard are assigned with <a href="${m('mapeos', '#learn-mode')}">Learn mode</a>: click the control on screen and move it on your controller.`],
-			['Can I use my phone or a tablet?', `Yes: your SHOW opens in the browser of a phone or tablet over wifi, with nothing to install, and you can protect it with a PIN. See <a href="${m('remoto')}">Remote control</a>.`],
-			['Does it run on Mac or Linux?', `For now there is only a Windows installer. The code builds on Linux and macOS with Qt 6 (instructions in the <a href="${REPO}#readme">README</a>). If you need it, <a href="${ISSUES}">tell us</a>: it helps us decide.`],
-			['Why does Windows warn when installing it?', `Because the installer is not signed with a code-signing certificate yet. Click “More info” and “Run anyway”. The <a href="${pageUrl('download', lang)}">download page</a> explains how to check with its SHA-256 fingerprint that the file is the original.`],
-			['Does it update itself?', 'Yes. It tells you about each new version and installs it after checking its SHA-256 fingerprint. You can turn this off in Options › Updates.'],
-			['Which languages is it in?', 'Spanish, English, Portuguese, French, Italian and German, with the full manual in all six.'],
-			['Can I use it at my school?', 'Yes, without asking anyone and with no per-classroom or per-student licences. Every student can install it at home too.'],
-			['Who makes it and how is it kept going?', `It is an independent free-software project, with its code open on <a href="${REPO}">GitHub</a>. Its engine comes from QLC+, another free-software project. You can help by reporting bugs, testing it with your gear or translating.`],
-			['How do I report a bug or suggest an idea?', `On <a href="${ISSUES}">GitHub</a>, with the bug and idea templates. Tell us what gear you use and, if you can, attach the show.`],
-		],
-	},
-}[lang];
+const f = dict(lang).faq;
+const items = f.items.map(([q, a]) => [q, html(a, lang)]);
 
 const schema = {
 	'@context': 'https://schema.org',
 	'@type': 'FAQPage',
-	mainEntity: copy.items.map(([q, a]) => ({
+	mainEntity: items.map(([q, a]) => ({
 		'@type': 'Question',
 		name: q,
 		acceptedAnswer: { '@type': 'Answer', text: a.replace(/<[^>]+>/g, '') },
@@ -68,16 +21,16 @@ const schema = {
 };
 ---
 
-<Site lang={lang} route="faq" title={copy.title} description={copy.description} schema={schema}>
+<Site lang={lang} paths={routePaths('faq')} section="faq" title={f.title} description={f.description} schema={schema}>
 	<section class="page-head">
 		<div class="wrap narrow">
-			<h1>{copy.title}</h1>
-			<p class="lead">{copy.lead} <a href={ISSUES}>{copy.ask}</a>.</p>
+			<h1>{f.title}</h1>
+			<p class="lead" set:html={html(f.lead, lang)} />
 		</div>
 	</section>
 	<div class="wrap narrow list">
 		{
-			copy.items.map(([q, a]) => (
+			items.map(([q, a]) => (
 				<details>
 					<summary>{q}</summary>
 					<p set:html={a} />

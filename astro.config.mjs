@@ -8,15 +8,10 @@ import starlight from '@astrojs/starlight';
 const site = process.env.SITE_URL || 'https://joseramos1999.github.io';
 const base = process.env.BASE_PATH ?? '/DMXTotalControl-web';
 
-// The manual's languages; the site's own pages are in Spanish and English for now.
-const manualOnly = ['pt', 'fr', 'it', 'de'];
-
 export default defineConfig({
 	site,
 	base,
 	trailingSlash: 'always',
-	// The manual in Portuguese, French, Italian and German has no home page of its own yet.
-	redirects: Object.fromEntries(manualOnly.map((lang) => [`/${lang}/`, `${base}/${lang}/manual/`])),
 	fonts: [
 		{
 			provider: fontProviders.fontsource(),

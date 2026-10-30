@@ -1,0 +1,13 @@
+---
+import View from '../../../views/Segment.astro';
+import { PREFIXED, SEGMENTS, type Lang } from '../../../i18n';
+
+export function getStaticPaths() {
+	return PREFIXED.flatMap((lang) => SEGMENTS.map((segment) => ({ params: { lang, segment } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const segment = Astro.params.segment as (typeof SEGMENTS)[number];
+---
+
+<View lang={lang} segment={segment} />

@@ -1,0 +1,115 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import Cta from '../components/Cta.astro';
+import { dict, html, manualUrl, routePaths, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = dict(lang);
+const q = t.qlc;
+---
+
+<Site lang={lang} paths={routePaths('qlc')} title={q.title} description={q.description}>
+	<section class="page-head">
+		<div class="wrap narrow">
+			<h1>{q.title}</h1>
+			<p class="lead">{q.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap narrow prose body">
+		<h2>{q.openTitle}</h2>
+		<p>{q.openText}</p>
+		<table>
+			<thead>
+				<tr>{q.tableHead.map((h) => <th scope="col">{h}</th>)}</tr>
+			</thead>
+			<tbody>
+				{
+					q.table.map(([from, to]) => (
+						<tr>
+							<td><code>{from}</code></td>
+							<td>{to}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+
+		<h2>{q.keepTitle}</h2>
+		<ul>
+			{q.keep.map((k) => <li>{k}</li>)}
+		</ul>
+
+		<h2>{q.changeTitle}</h2>
+		<div class="grid grid-2 changes">
+			{
+				q.change.map((c) => (
+					<a class="card" href={manualUrl(lang, c.page)}>
+						<h3>{c.title}</h3>
+						<p class="muted">{c.text}</p>
+						<span class="more">
+							{t.common.inManual} <Icon name="right-arrow" size="1em" />
+						</span>
+					</a>
+				))
+			}
+		</div>
+
+		<h2>{q.fixturesTitle}</h2>
+		<p set:html={html(q.fixtures, lang)} />
+
+		<p class="thanks">{q.thanks}</p>
+	</div>
+
+	<Cta lang={lang} />
+</Site>
+
+<style>
+	.body {
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.body > h2:first-child {
+		margin-top: 0;
+	}
+
+	.changes {
+		margin: 0 0 1em;
+	}
+
+	.changes .card {
+		display: flex;
+		flex-direction: column;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.changes .card:hover {
+		border-color: var(--line-strong);
+	}
+
+	.changes h3 {
+		margin-top: 0;
+	}
+
+	.changes .more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: auto;
+		color: var(--accent-hover);
+		font-weight: 600;
+		font-size: 0.95rem;
+	}
+
+	.thanks {
+		margin-top: 2em;
+		color: var(--muted);
+		font-style: italic;
+	}
+</style>

@@ -1,22 +1,25 @@
 ---
 import { Icon } from '@astrojs/starlight/components';
 import logo from '../assets/logo.svg';
-import { REPO, manualUrl, navStrings, pageUrl, routes, url, type Lang, type Route } from '../i18n';
+import { LANGS, REPO, dict, manualUrl, pageUrl, url, type Lang } from '../i18n';
+import type { Section } from '../layouts/Site.astro';
 
 interface Props {
 	lang: Lang;
-	route: Route;
+	paths: Record<Lang, string>;
+	section: Section;
 }
 
-const { lang, route } = Astro.props;
-const n = navStrings(lang);
-const other: Lang = lang === 'es' ? 'en' : 'es';
+const { lang, paths, section } = Astro.props;
+const n = dict(lang).nav;
 const links = [
-	{ href: pageUrl('home', lang, '#funciones'), label: n.features },
-	{ href: manualUrl(lang), label: n.manual },
-	{ href: pageUrl('news', lang), label: n.news, current: route === 'news' },
-	{ href: pageUrl('faq', lang), label: n.faq, current: route === 'faq' },
+	{ href: pageUrl('features', lang), label: n.features, current: section === 'features' },
+	{ href: pageUrl('hardware', lang), label: n.hardware, current: section === 'hardware' },
+	{ href: pageUrl('learn', lang), label: n.learn, current: section === 'learn' },
+	{ href: manualUrl(lang), label: n.manual, current: false },
+	{ href: pageUrl('faq', lang), label: n.faq, current: section === 'faq' },
 ];
+const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: url(paths[l]) }));
 ---
 
 <header class="site-header">
@@ -29,10 +32,24 @@ const links = [
 			{links.map((l) => <a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>)}
 		</nav>
 		<div class="right">
-			<a class="lang" href={url(routes[route][other])} hreflang={other} lang={other}>
-				<Icon name="translate" size="1.1em" />
-				{other === 'en' ? 'English' : 'Español'}
-			</a>
+			<details class="langs">
+				<summary>
+					<Icon name="translate" size="1.1em" />
+					<span class="sr-only">{dict(lang).common.language}:</span>
+					<span>{lang.toUpperCase()}</span>
+				</summary>
+				<ul>
+					{
+						languages.map((l) => (
+							<li>
+								<a href={l.href} hreflang={l.lang} lang={l.lang} aria-current={l.lang === lang ? 'true' : undefined}>
+									{l.name}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</details>
 			<a class="icon" href={REPO} aria-label="GitHub"><Icon name="github" size="1.35em" /></a>
 			<a class="btn btn-primary btn-sm cta" href={pageUrl('download', lang)}>
 				<Icon name="download" size="1.1em" />
@@ -43,13 +60,24 @@ const links = [
 				<div class="panel">
 					{links.map((l) => <a href={l.href}>{l.label}</a>)}
 					<a href={pageUrl('download', lang)}>{n.download}</a>
-					<a href={url(routes[route][other])} hreflang={other} lang={other}>{other === 'en' ? 'English' : 'Español'}</a>
 					<a href={REPO}>GitHub</a>
 				</div>
 			</details>
 		</div>
 	</div>
 </header>
+
+<script>
+	// One open menu at a time, and a click outside closes it
+	const menus = [...document.querySelectorAll<HTMLDetailsElement>('.site-header details')];
+	document.addEventListener('click', (e) => {
+		for (const d of menus) if (d.open && !d.contains(e.target as Node)) d.open = false;
+	});
+	for (const d of menus)
+		d.addEventListener('toggle', () => {
+			if (d.open) for (const other of menus) if (other !== d) other.open = false;
+		});
+</script>
 
 <style>
 	.site-header {
@@ -86,12 +114,12 @@ const links = [
 
 	.links {
 		display: none;
-		gap: 4px;
+		gap: 2px;
 	}
 
 	.links a,
-	.lang,
-	.icon {
+	.icon,
+	.langs summary {
 		color: var(--muted);
 		text-decoration: none;
 		font-size: 0.95rem;
@@ -102,10 +130,11 @@ const links = [
 
 	.links a:hover,
 	.links a[aria-current='page'],
-	.lang:hover,
-	.icon:hover {
+	.icon:hover,
+	.langs summary:hover,
+	.langs[open] summary {
 		color: var(--text);
-		background: rgba(255, 255, 255, 0.05);
+		background: rgba(255, 255, 255, 0.06);
 	}
 
 	.right {
@@ -115,20 +144,67 @@ const links = [
 		gap: 6px;
 	}
 
-	.lang,
 	.icon {
 		display: none;
 		align-items: center;
-		gap: 6px;
 	}
 
 	.cta {
 		display: none;
 	}
 
-	.menu summary {
+	details {
+		position: relative;
+	}
+
+	summary {
 		list-style: none;
 		cursor: pointer;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.langs summary {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 44px;
+	}
+
+	.langs ul {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 6px);
+		list-style: none;
+		margin: 0;
+		padding: 6px;
+		min-width: 170px;
+		background: var(--surface);
+		border: 1px solid var(--line-strong);
+		border-radius: 12px;
+		box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+	}
+
+	.langs a {
+		display: block;
+		padding: 9px 12px;
+		border-radius: 8px;
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 550;
+	}
+
+	.langs a:hover {
+		background: var(--surface-2);
+	}
+
+	.langs a[aria-current='true'] {
+		color: var(--accent-hover);
+	}
+
+	.menu summary {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -138,8 +214,8 @@ const links = [
 		color: var(--text);
 	}
 
-	.menu summary::-webkit-details-marker {
-		display: none;
+	.menu {
+		position: static;
 	}
 
 	.menu[open] summary {
@@ -171,9 +247,8 @@ const links = [
 		}
 	}
 
-	@media (min-width: 960px) {
+	@media (min-width: 1040px) {
 		.links,
-		.lang,
 		.icon {
 			display: flex;
 		}

@@ -1,21 +1,39 @@
 # Web de DMX Total Control
 
-La web del programa [DMX Total Control](https://github.com/joseramos1999/DMXTotalControl): inicio, descarga, preguntas frecuentes, novedades, aviso legal y el manual en seis idiomas. Hecha con [Astro](https://astro.build) y [Starlight](https://starlight.astro.build) (el manual), y publicada en GitHub Pages.
+La web del programa [DMX Total Control](https://github.com/joseramos1999/DMXTotalControl), en seis idiomas: inicio, funciones, una página por público (DJs, bandas, teatro, escuelas, salas), hardware compatible, aprende (con guías para empezar con DMX), descarga, preguntas, novedades, ¿vienes de QLC+?, colabora, hoja de ruta, prensa, aviso legal y el manual. Hecha con [Astro](https://astro.build) y [Starlight](https://starlight.astro.build) (el manual), y publicada en GitHub Pages.
 
 La hoja de ruta de la web y de la campaña está en el repositorio del programa, en `promocion/` (no se sube).
+
+## Idiomas y direcciones
+
+El español va en la raíz con direcciones en español (`/descargar/`, `/para/djs/`, `/aprende/que-es-dmx/`); los demás idiomas, bajo su código y con direcciones en inglés (`/en/download/`, `/pt/for/djs/`, `/de/learn/what-is-dmx/`). La tabla de direcciones está en `src/routes.mjs`.
 
 ## Qué sale de dónde
 
 | Contenido | De dónde sale |
 |---|---|
+| Los textos de las páginas | `src/i18n/<idioma>.ts`. `es.ts` es la fuente; los demás son traducciones con la misma forma (`typeof es`), así que si falta una clave, TypeScript lo dice |
+| Las guías para empezar | `src/content/guias/<idioma>/{dmx,connect,network,interface}.md` |
 | El manual (`/manual/`, `/en/manual/`, `/pt/manual/`…) | `docs/manual` del repositorio del programa, copiado por `scripts/sync-app.mjs` a `src/content/docs/` (no se sube) |
 | Las novedades en español | `docs/novedades/vX.Y.Z.md` del programa, copiadas a `src/content/novedades/es/` (no se suben) |
-| Las novedades en inglés | `src/content/novedades/en/vX.Y.Z.md`, traducidas aquí |
+| Las novedades en inglés | `src/content/novedades/en/vX.Y.Z.md`, traducidas aquí. Portugués, francés, italiano y alemán muestran las inglesas |
+| La lista de hardware compatible | `src/data/hardware.ts` (con `tested: 'nombre'` cuando alguien lo ha probado) |
 | Versión, fecha, tamaño y SHA-256 del instalador | La API de GitHub (`releases/latest`), guardada en `src/data/release.json` para compilar sin conexión |
-| Las capturas de la web | `src/assets/shots/es` y `en`, hechas con el programa (ver abajo) |
-| Los textos de las páginas | `src/views/*.astro`, en español e inglés |
+| Las capturas de la web | `src/assets/shots/<idioma>/`, hechas con el programa (ver abajo) |
 
 `scripts/sync-app.mjs` busca el programa en `../DMXTotalControl`; con `APP_REPO` se le da otra ruta.
+
+### Enlaces dentro de los textos
+
+En los diccionarios, los enlaces usan esquemas cortos que la web convierte en la dirección del idioma de la página: `manual:salidas#modo`, `page:download`, `for:schools`, `guide:connect`, `issues:`, `compat:` (el informe de compatibilidad), `repo:`, `repo:ROADMAP.md`, `readme:`, `releases:`. En las guías (Markdown) los enlaces son relativos (`../../manual/salidas/`, `../what-is-dmx/`), que funcionan igual en todos los idiomas porque las direcciones son paralelas.
+
+### Comprobar una traducción
+
+```bash
+npx -y -p typescript tsc --ignoreConfig --noEmit --strict --skipLibCheck --target es2022 --module esnext --moduleResolution bundler src/i18n/fr.ts
+```
+
+No debe decir nada.
 
 ## Trabajar en local
 
@@ -51,10 +69,11 @@ Al registrar el dominio (por ejemplo `dmxtotalcontrol.com`): en **Settings › P
 - La descarga, la huella y las novedades en español se actualizan solas (en la siguiente publicación, como mucho al día siguiente).
 - Escribir las novedades en inglés en `src/content/novedades/en/vX.Y.Z.md` (mismo formato que `v1.0.0.md`).
 - Si la interfaz ha cambiado a la vista, rehacer las capturas.
+- Si cambia lo que viene después, poner al día `roadmap` en los diccionarios (resume el `ROADMAP.md` del programa).
 
 ## Capturas
 
-Se hacen con el propio programa (`--grab`), a 1440 × 900 y con el tema oscuro, desde los shows de ejemplo de `dtc/examples`. Las inglesas, desde copias de esos shows con los nombres traducidos (Azul → Blue, Colores → Colours…), para que no salgan escenas en español.
+Se hacen con el propio programa (`--grab`), a 1440 × 900 y con el tema oscuro, desde los shows de ejemplo de `dtc/examples`, en cada idioma (`--locale es_ES`, `en_US`, `pt_BR`, `fr_FR`, `it_IT`, `de_DE`). Para los demás idiomas se usan copias de esos shows con los nombres de las escenas traducidos (Azul → Blue, Bleu, Blau…), para que no salgan escenas en español.
 
 ```bash
 dmxtotalcontrol.exe --locale es_ES --theme dark --size 1440x900 --page 0 --grab src/assets/shots/es/live.png "Bolo pequeño.qxw"
@@ -64,14 +83,18 @@ dmxtotalcontrol.exe --locale es_ES --theme dark --size 1440x900 --page 0 --grab 
 |---|---|---|
 | `live` | Bolo pequeño | `--page 0` |
 | `mixer` | Bolo pequeño | `--page 0 --mixer` |
+| `mappings` | Bolo pequeño | `--page 0 --learn` (el modo Mapear) |
 | `show` | Bolo pequeño | `--page 1` |
+| `outputs` | Bolo pequeño | `--page 6 --play 7` (los niveles DMX con el arcoíris sonando) |
 | `fx` | Concierto con cabezas móviles | `--page 2 --select-all --fx` |
 | `program` | Concierto con cabezas móviles | `--page 2 --select-all` |
 | `scenes` | Concierto con cabezas móviles | `--page 3 --scene 0` |
 | `patch` | Concierto con cabezas móviles | `--page 4 --patch-view plan` |
 | `playbacks` | Sala con playbacks | `--page 9` |
 
-Las imágenes para redes sociales (`public/og/es.png` y `en.png`, 1200 × 630) salen de la captura `live`: `node scripts/make-og.mjs` las rehace.
+No uses la vista de interfaces de Salidas (`--page 6` sin `--play`): lista las direcciones de red del ordenador.
+
+Las imágenes para redes sociales (`public/og/<idioma>.png`, 1200 × 630) salen de la captura `live` y del titular de la portada de cada diccionario: `node scripts/make-og.mjs` las rehace.
 
 ## Marca
 

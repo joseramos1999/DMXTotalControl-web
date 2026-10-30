@@ -6,15 +6,16 @@ import Search from '@astrojs/starlight/components/Search.astro';
 import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
 import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
 import logo from '../../assets/logo.svg';
-import { navStrings, pageUrl, siteLang } from '../../i18n';
+import { dict, pageUrl, siteLang } from '../../i18n';
 
 const { lang } = Astro.locals.starlightRoute;
-const n = navStrings(lang);
 const site = siteLang(lang);
+const n = dict(site).nav;
 const links = [
-	{ href: pageUrl('download', site), label: n.download },
-	{ href: pageUrl('news', site), label: n.news },
+	{ href: pageUrl('features', site), label: n.features },
+	{ href: pageUrl('learn', site), label: n.learn },
 	{ href: pageUrl('faq', site), label: n.faq },
+	{ href: pageUrl('download', site), label: n.download },
 ];
 ---
 

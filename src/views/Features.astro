@@ -1,0 +1,158 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import Cta from '../components/Cta.astro';
+import { dict, manualUrl, routePaths, type Lang } from '../i18n';
+import { shot, type Shot } from '../data/shots';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = dict(lang);
+const f = t.features;
+
+const order: { key: keyof typeof f.sections; shot: Shot; page: string }[] = [
+	{ key: 'live', shot: 'live', page: 'directo' },
+	{ key: 'program', shot: 'program', page: 'programar' },
+	{ key: 'scenes', shot: 'scenes', page: 'escenas' },
+	{ key: 'playbacks', shot: 'playbacks', page: 'playbacks' },
+	{ key: 'show', shot: 'show', page: 'show' },
+	{ key: 'mappings', shot: 'mappings', page: 'mapeos' },
+	{ key: 'patch', shot: 'patch', page: 'patch' },
+	{ key: 'outputs', shot: 'outputs', page: 'salidas' },
+];
+---
+
+<Site lang={lang} paths={routePaths('features')} section="features" title={f.title} description={f.description}>
+	<section class="page-head">
+		<div class="wrap">
+			<h1>{f.title}</h1>
+			<p class="lead">{f.lead}</p>
+			<nav class="jump" aria-label={f.title}>
+				{order.map((o) => <a href={`#${o.key}`}>{f.sections[o.key].title}</a>)}
+			</nav>
+		</div>
+	</section>
+
+	<div class="wrap list">
+		{
+			order.map((o, i) => {
+				const s = f.sections[o.key];
+				return (
+					<section class={`feature ${i % 2 ? 'flip' : ''}`} id={o.key}>
+						<div>
+							<h2>{s.title}</h2>
+							<p class="muted">{s.text}</p>
+							<ul class="ticks">
+								{s.points.map((p) => (
+									<li>{p}</li>
+								))}
+							</ul>
+							<a class="more" href={manualUrl(lang, o.page)}>
+								{t.common.inManual} <Icon name="right-arrow" size="1em" />
+							</a>
+						</div>
+						<div class="shot">
+							<Image src={shot(lang, o.shot)} alt={s.alt} widths={[480, 800, 1100]} sizes="(min-width: 1040px) 640px, 100vw" />
+						</div>
+					</section>
+				);
+			})
+		}
+
+		<section class="card extras">
+			<h2>{f.extrasTitle}</h2>
+			<ul class="ticks">
+				{f.extras.map((e) => <li>{e}</li>)}
+			</ul>
+		</section>
+	</div>
+
+	<Cta lang={lang} />
+</Site>
+
+<style>
+	.jump {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 24px;
+	}
+
+	.jump a {
+		padding: 6px 14px;
+		border-radius: 999px;
+		background: var(--surface);
+		border: 1px solid var(--line-strong);
+		color: var(--text);
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.92rem;
+	}
+
+	.jump a:hover {
+		background: var(--surface-2);
+	}
+
+	.list {
+		display: grid;
+		gap: clamp(56px, 8vw, 96px);
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.feature {
+		display: grid;
+		gap: 24px;
+		align-items: center;
+		scroll-margin-top: 88px;
+	}
+
+	@media (min-width: 1040px) {
+		.feature {
+			grid-template-columns: 5fr 6fr;
+			gap: 56px;
+		}
+		.feature.flip > div:first-child {
+			order: 2;
+		}
+	}
+
+	.feature h2 {
+		font-size: clamp(1.5rem, 2.6vw, 2rem);
+	}
+
+	.feature .ticks {
+		margin: 4px 0 20px;
+		font-size: 0.97rem;
+	}
+
+	.more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.more:hover {
+		text-decoration: underline;
+	}
+
+	.extras {
+		padding: clamp(24px, 4vw, 40px);
+	}
+
+	.extras h2 {
+		font-size: 1.5rem;
+	}
+
+	@media (min-width: 900px) {
+		.extras .ticks {
+			grid-template-columns: 1fr 1fr;
+			column-gap: 32px;
+		}
+	}
+</style>
