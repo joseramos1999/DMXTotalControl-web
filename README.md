@@ -72,6 +72,8 @@ En el DNS de GoDaddy, la web usa solo estos registros:
 | AAAA | `@` | `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153` |
 | CNAME | `www` | `joseramos1999.github.io` |
 | TXT | `_github-pages-challenge-joseramos1999` | El código de verificación de GitHub |
+| TXT | `@` | `google-site-verification=wzUpG4PM7wGvozEEzzTS2xy2qm_jWP_bEB9e8kxbj9M` (Google Search Console, propiedad de dominio). Es un registro TXT más en `@`, al lado del SPF del correo: no se toca el SPF |
+| CNAME | `8146609655541d570d79a64970266d06` | `verify.bing.com` (Bing Webmaster Tools; verifica el sitio, y también da de alta la web en los buscadores que usan Bing) |
 
 El resto (MX, `autodiscover`, los `_domainkey`, SPF, DMARC, `sip`, `lyncdiscover`, `msoid`…) es el correo de Microsoft 365: no hay que tocarlo.
 
