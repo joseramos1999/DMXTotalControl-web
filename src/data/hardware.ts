@@ -20,7 +20,7 @@ export const hardware: { category: keyof Dict['hardware']['categories']; items: 
 	{
 		category: 'usb',
 		items: [
-			{ name: 'Enttec Open DMX USB', note: 'openFamily' },
+			{ name: 'Enttec Open DMX USB', note: 'openFamily', tested: 'DMX Total Control' },
 			{ name: 'Enttec DMX USB Pro', note: 'outIn' },
 			{ name: 'Enttec DMX USB Pro Mk2', note: 'out2In' },
 			{ name: 'DMXKing ultraDMX (Micro, Pro, RDM Pro)', note: 'ultra' },
@@ -43,7 +43,7 @@ export const hardware: { category: keyof Dict['hardware']['categories']; items: 
 		category: 'controllers',
 		items: [
 			{ name: 'Akai APC mini', note: 'template' },
-			{ name: 'Akai APC mini mk2', note: 'template' },
+			{ name: 'Akai APC mini mk2', note: 'template', tested: 'DMX Total Control' },
 			{ name: 'Akai APC40 mkII', note: 'template40' },
 			{ nameKey: 'midi', note: 'midi' },
 			{ nameKey: 'osc', note: 'osc' },

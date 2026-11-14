@@ -42,7 +42,7 @@ Ve a **Patch** (F5) y pulsa **«Añadir fixtures»**:
 3. Pon **la misma dirección** y el universo.
 4. Si tienes varios iguales, indica cuántos: el programa les da direcciones seguidas.
 
-Si tu modelo no está, prueba con la Open Fixture Library, importa su archivo GDTF o créalo en el creador de fixtures (consulta [Fixtures](../../manual/fixtures/)). Para PAR sencillos, los fixtures genéricos (RGB, RGBW, dimmer) suelen bastar.
+Si tu modelo no está, prueba con la Open Fixture Library, búscalo en GDTF-Share desde el programa, importa su archivo GDTF o créalo en el creador de fixtures (consulta [Fixtures](../../manual/fixtures/)). Para PAR sencillos, los fixtures genéricos (RGB, RGBW, dimmer) suelen bastar.
 
 ## 5. Prueba
 

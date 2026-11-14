@@ -42,7 +42,7 @@ Go to **Patch** (F5) and press **“Add fixtures”**:
 3. Set **the same address** and the universe.
 4. If you have several identical ones, say how many: the program gives them consecutive addresses.
 
-If your model isn’t there, try the Open Fixture Library, import its GDTF file or build it in the fixture creator (see [Fixtures](../../manual/fixtures/)). For simple PARs, the generic fixtures (RGB, RGBW, dimmer) are usually enough.
+If your model isn’t there, try the Open Fixture Library, search GDTF-Share from the program, import its GDTF file or build it in the fixture creator (see [Fixtures](../../manual/fixtures/)). For simple PARs, the generic fixtures (RGB, RGBW, dimmer) are usually enough.
 
 ## 5. Test
 
