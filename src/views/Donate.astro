@@ -1,0 +1,155 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import Site from '../layouts/Site.astro';
+import { DONATIONS } from '../data/donate';
+import { dict, html, pageUrl, routePaths, type Lang } from '../i18n';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = dict(lang).donate;
+---
+
+<Site lang={lang} paths={routePaths('donate')} section="donate" title={d.title} description={d.description}>
+	<section class="page-head">
+		<div class="wrap narrow">
+			<span class="heart" aria-hidden="true"><Icon name="heart" size="1.6em" /></span>
+			<h1>{d.h1}</h1>
+			<p class="lead">{d.lead}</p>
+		</div>
+	</section>
+
+	<div class="wrap narrow body">
+		<section aria-labelledby="platforms">
+			<h2 id="platforms">{d.platformsTitle}</h2>
+			{
+				DONATIONS.length ? (
+					<div class="platforms">
+						{DONATIONS.map((p) => (
+							<a class="card platform" href={p.url} rel="noopener">
+								<span class="name">
+									{p.name} <Icon name="external" size="0.9em" />
+								</span>
+								<span class="muted">{d.platforms[p.id]}</span>
+							</a>
+						))}
+					</div>
+				) : (
+					<p class="card soon" set:html={html(d.soon, lang)} />
+				)
+			}
+		</section>
+
+		<section aria-labelledby="uses">
+			<h2 id="uses">{d.usesTitle}</h2>
+			<div class="uses">
+				{
+					d.uses.map((u) => (
+						<div class="card">
+							<h3>{u.title}</h3>
+							<p class="muted" set:html={html(u.text, lang)} />
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="card free" aria-labelledby="free">
+			<h2 id="free">{d.freeTitle}</h2>
+			<p class="muted" set:html={html(d.free, lang)} />
+			<a class="btn btn-ghost" href={pageUrl('contribute', lang)}>{d.freeAction} <Icon name="right-arrow" size="1em" /></a>
+		</section>
+
+		<ul class="notes">
+			{d.notes.map((n) => <li>{n}</li>)}
+		</ul>
+		<p class="thanks">{d.thanks}</p>
+	</div>
+</Site>
+
+<style>
+	.body {
+		display: grid;
+		gap: 44px;
+		padding-bottom: clamp(64px, 9vw, 112px);
+	}
+
+	.heart {
+		display: inline-flex;
+		color: #ff5c8a;
+		margin-bottom: 8px;
+	}
+
+	h2 {
+		font-size: 1.35rem;
+		margin: 0 0 14px;
+	}
+
+	.platforms,
+	.uses {
+		display: grid;
+		gap: 14px;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+	}
+
+	.platform {
+		display: grid;
+		gap: 6px;
+		text-decoration: none;
+		color: inherit;
+		border-top: 3px solid #ff5c8a;
+		transition:
+			transform 0.15s ease,
+			border-color 0.15s ease;
+	}
+
+	.platform:hover {
+		transform: translateY(-2px);
+		border-color: var(--accent);
+	}
+
+	.name {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 1.15rem;
+		font-weight: 700;
+		color: var(--text);
+	}
+
+	.uses h3 {
+		font-size: 1.1rem;
+		margin: 0 0 6px;
+	}
+
+	.uses p,
+	.free p {
+		margin: 0;
+	}
+
+	.free {
+		display: grid;
+		gap: 14px;
+		justify-items: start;
+	}
+
+	.free h2 {
+		margin: 0;
+	}
+
+	.notes {
+		margin: 0;
+		padding-left: 1.2em;
+		display: grid;
+		gap: 8px;
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+
+	.thanks {
+		margin: 0;
+		font-weight: 600;
+	}
+</style>

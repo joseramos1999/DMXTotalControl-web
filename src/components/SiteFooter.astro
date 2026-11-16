@@ -1,5 +1,6 @@
 ---
 import logo from '../assets/logo.svg';
+import { DONATIONS_OPEN } from '../data/donate';
 import { ISSUES, REPO, SEGMENTS, dict, manualUrl, pageUrl, segmentPath, url, type Lang } from '../i18n';
 
 interface Props {
@@ -52,6 +53,7 @@ const credits = pageUrl('legal', lang, `#${t.legal.sections[3].id}`);
 			<h2>{f.community}</h2>
 			<ul>
 				<li><a href={pageUrl('contribute', lang)}>{f.contribute}</a></li>
+				{DONATIONS_OPEN && <li><a href={pageUrl('donate', lang)}>{f.donate}</a></li>}
 				<li><a href={REPO}>{f.source}</a></li>
 				<li><a href={ISSUES}>{f.reportBug}</a></li>
 				<li><a href={pageUrl('legal', lang)}>{f.legal}</a></li>

@@ -4,6 +4,7 @@ import { Icon } from '@astrojs/starlight/components';
 import Site from '../layouts/Site.astro';
 import { REPO, SEGMENTS, dict, fill, formatDate, formatSize, html, manualUrl, pageUrl, routePaths, segmentPath, url, type Lang } from '../i18n';
 import { release } from '../data/release';
+import { DONATIONS_OPEN } from '../data/donate';
 import { shot, type Shot } from '../data/shots';
 import { segmentLook } from '../data/segments';
 
@@ -212,6 +213,7 @@ const schema = {
 			<div class="actions start">
 				<a class="btn btn-ghost" href={REPO}><Icon name="github" size="1.2em" />{h.source}</a>
 				<a class="btn btn-ghost" href={pageUrl('roadmap', lang)}><Icon name="list-format" size="1.2em" />{h.roadmap}</a>
+				{DONATIONS_OPEN && <a class="btn btn-ghost" href={pageUrl('donate', lang)}><Icon name="heart" size="1.2em" />{h.donate}</a>}
 			</div>
 		</div>
 	</section>

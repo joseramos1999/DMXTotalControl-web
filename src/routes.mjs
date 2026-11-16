@@ -19,6 +19,7 @@ export const SLUGS = {
 	qlc: ['vienes-de-qlc', 'from-qlc'],
 	contribute: ['colabora', 'contribute'],
 	roadmap: ['hoja-de-ruta', 'roadmap'],
+	donate: ['donar', 'donate'],
 	press: ['prensa', 'press'],
 };
 

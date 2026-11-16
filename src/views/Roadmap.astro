@@ -1,8 +1,11 @@
 ---
 // A summary of ROADMAP.md in the program's repository: update it when a
-// version is published or the plans change.
+// version is published or the plans change. The published versions come from
+// the release notes.
+import { getCollection } from 'astro:content';
 import Site from '../layouts/Site.astro';
-import { REPO, dict, html, routePaths, type Lang } from '../i18n';
+import { DONATIONS_OPEN } from '../data/donate';
+import { REPO, dict, fill, formatDate, html, pageUrl, routePaths, type Lang } from '../i18n';
 
 interface Props {
 	lang: Lang;
@@ -10,9 +13,14 @@ interface Props {
 
 const { lang } = Astro.props;
 const r = dict(lang).roadmap;
+
+const notesLang = lang === 'es' || lang === 'en' ? lang : 'en';
+const versions = (await getCollection('novedades', (e) => e.id.startsWith(`${notesLang}/`) && !!e.data.date))
+	.map((e) => ({ version: e.data.version, date: e.data.date! }))
+	.sort((a, b) => b.version.localeCompare(a.version, 'en', { numeric: true }));
 ---
 
-<Site lang={lang} paths={routePaths('roadmap')} title={r.title} description={r.description}>
+<Site lang={lang} paths={routePaths('roadmap')} section="roadmap" title={r.title} description={r.description}>
 	<section class="page-head">
 		<div class="wrap">
 			<h1>{r.title}</h1>
@@ -21,6 +29,22 @@ const r = dict(lang).roadmap;
 	</section>
 
 	<div class="wrap body">
+		<section class="versions" aria-labelledby="versions">
+			<h2 id="versions" class="small-title">{r.versionsTitle}</h2>
+			<ol>
+				{
+					versions.map((v) => (
+						<li>
+							<a href={pageUrl('news', lang, `#v${v.version}`)} title={r.notes}>
+								<strong>{v.version}</strong>
+								<time datetime={v.date}>{formatDate(v.date, lang)}</time>
+							</a>
+						</li>
+					))
+				}
+			</ol>
+		</section>
+
 		<div class="columns">
 			{
 				r.columns.map((col, i) => (
@@ -37,14 +61,46 @@ const r = dict(lang).roadmap;
 			}
 		</div>
 
-		<section class="out">
-			<h2>{r.outTitle}</h2>
-			<ul>
-				{r.out.map((o) => <li>{o}</li>)}
-			</ul>
+		<section class="plan" aria-labelledby="plan">
+			<div class="intro">
+				<span class="eyebrow">{r.planEyebrow}</span>
+				<h2 id="plan">{r.planTitle}</h2>
+				<p class="muted">{r.planLead}</p>
+			</div>
+			<ol class="parts">
+				{
+					r.parts.map((p, i) => (
+						<li class="card part">
+							<span class="subtitle">{fill(r.part, { n: String(i + 1) })}</span>
+							<h3>{p.title}</h3>
+							<p class="muted">{p.text}</p>
+							<ul>
+								{p.items.map((item) => (
+									<li>{item}</li>
+								))}
+							</ul>
+						</li>
+					))
+				}
+			</ol>
 		</section>
 
-		<p class="lead" set:html={html(r.idea, lang)} />
+		<div class="tail">
+			<section>
+				<h2>{r.laterTitle}</h2>
+				<ul>
+					{r.later.map((o) => <li>{o}</li>)}
+				</ul>
+			</section>
+			<section>
+				<h2>{r.outTitle}</h2>
+				<ul>
+					{r.out.map((o) => <li>{o}</li>)}
+				</ul>
+			</section>
+		</div>
+
+		<p class="lead" set:html={html(DONATIONS_OPEN ? `${r.idea} ${r.ideaDonate}` : r.idea, lang)} />
 	</div>
 </Site>
 
@@ -55,14 +111,54 @@ const r = dict(lang).roadmap;
 		padding-bottom: clamp(64px, 9vw, 112px);
 	}
 
+	.small-title {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--faint);
+		margin: 0 0 10px;
+	}
+
+	.versions ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.versions a {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 10px;
+		padding: 8px 14px;
+		border: 1px solid var(--line-strong);
+		border-radius: 999px;
+		color: var(--muted);
+		text-decoration: none;
+		font-size: 0.9rem;
+	}
+
+	.versions a:hover {
+		border-color: var(--accent);
+		color: var(--text);
+	}
+
+	.versions strong {
+		color: var(--text);
+		font-size: 1rem;
+	}
+
 	.columns {
 		display: grid;
 		gap: 16px;
 	}
 
-	@media (min-width: 960px) {
+	@media (min-width: 900px) {
 		.columns {
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: 1fr 1fr;
 		}
 	}
 
@@ -72,10 +168,6 @@ const r = dict(lang).roadmap;
 
 	.col-1 {
 		border-top-color: var(--purple);
-	}
-
-	.col-2 {
-		border-top-color: var(--line-strong);
 	}
 
 	.subtitle {
@@ -91,26 +183,83 @@ const r = dict(lang).roadmap;
 		margin-top: 4px;
 	}
 
-	.col ul:not(.ticks) {
+	.col ul:not(.ticks),
+	.part ul,
+	.tail ul {
 		margin: 0;
-		padding-left: 1.2em;
-		display: grid;
-		gap: 10px;
-	}
-
-	.col ul:not(.ticks) li::marker {
-		color: var(--faint);
-	}
-
-	.out h2 {
-		font-size: 1.3rem;
-	}
-
-	.out ul {
-		color: var(--muted);
 		padding-left: 1.2em;
 		display: grid;
 		gap: 8px;
+	}
+
+	.col ul:not(.ticks) li::marker,
+	.part li::marker,
+	.tail li::marker {
+		color: var(--faint);
+	}
+
+	.plan {
+		display: grid;
+		gap: 20px;
+	}
+
+	.plan .intro {
+		max-width: 760px;
+	}
+
+	.plan .intro h2 {
+		margin: 4px 0 8px;
+	}
+
+	.plan .intro p {
 		margin: 0;
+	}
+
+	.parts {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 16px;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+	}
+
+	.part {
+		border-top: 3px solid var(--line-strong);
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.part h3 {
+		font-size: 1.2rem;
+		margin: 2px 0 0;
+	}
+
+	.part > p {
+		margin: 0 0 8px;
+	}
+
+	.part li {
+		font-size: 0.95rem;
+	}
+
+	.tail {
+		display: grid;
+		gap: 32px;
+	}
+
+	@media (min-width: 900px) {
+		.tail {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.tail h2 {
+		font-size: 1.3rem;
+	}
+
+	.tail ul {
+		color: var(--muted);
 	}
 </style>

@@ -25,6 +25,8 @@ const fr: typeof es = {
 		manual: 'Manuel',
 		news: 'Nouveautés',
 		faq: 'Questions',
+		roadmap: 'Feuille de route',
+		donate: 'Faire un don',
 		download: 'Télécharger',
 		menu: 'Menu',
 	},
@@ -38,6 +40,7 @@ const fr: typeof es = {
 		source: 'Code source',
 		reportBug: 'Signaler un bug',
 		contribute: 'Contribuer',
+		donate: 'Faire un don',
 		roadmap: 'Feuille de route',
 		qlc: 'Vous venez de QLC+ ?',
 		press: 'Presse',
@@ -130,6 +133,7 @@ const fr: typeof es = {
 		],
 		source: 'Voir le code',
 		roadmap: 'Feuille de route',
+		donate: 'Soutenir le projet',
 	},
 
 	download: {
@@ -220,6 +224,7 @@ const fr: typeof es = {
 					'Il est hébergé par GitHub Pages qui, comme tout serveur, enregistre des données techniques des visites (comme l’adresse IP) selon sa propre <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement">déclaration de confidentialité</a>.',
 					'Les téléchargements proviennent de GitHub. Le programme n’envoie aucune donnée d’utilisation : il ne se connecte à internet que pour rechercher et télécharger ses mises à jour (désactivable dans Options › Mises à jour), celles de l’Open Fixture Library et, si vous l’utilisez avec votre compte, GDTF-Share.',
 					'Si vous nous écrivez sur GitHub, votre message y est public : n’y mettez pas de données personnelles que vous ne voulez pas partager.',
+					'Si vous faites un don, le paiement est géré par la plateforme que vous choisissez, avec sa propre politique de confidentialité : nous ne recevons pas les données de votre carte.',
 				],
 			},
 			{
@@ -577,14 +582,18 @@ const fr: typeof es = {
 			{ title: 'Partagez des fixtures', text: 'Si vous créez la définition d’un fixture qui manquait, envoyez-la à l’Open Fixture Library pour qu’elle profite à tous.', link: 'https://open-fixture-library.org', action: 'Open Fixture Library' },
 			{ title: 'Programmez', text: 'Le code est en C++ et QML (Qt 6). Lisez le guide de contribution et proposez une idée avant un gros changement.', link: 'repo:CONTRIBUTING.md', action: 'Guide de contribution' },
 			{ title: 'Recommandez-le', text: 'Dans votre groupe de techniciens, dans votre école ou dans votre salle. Si vous écrivez à son sujet, la page Presse contient des textes, des logos et des captures.', link: 'page:press', action: 'Aller à Presse' },
+			{ title: 'Faites un don', text: 'Aidez à payer du matériel pour le tester, le certificat de signature de l’installateur et le temps pour ce qui arrive dans la feuille de route.', link: 'page:donate', action: 'Faire un don' },
 		],
 	},
 
 	roadmap: {
 		title: 'Feuille de route',
-		description: 'Ce que fait déjà DMX Total Control, ce qui arrive dans les prochaines versions et ce qui est sur la liste.',
-		lead: 'Ce qu’il fait déjà, ce qui arrive maintenant et ce qui est sur la liste. Le détail, version par version, est sur GitHub.',
+		description:
+			'Ce que fait déjà DMX Total Control, ce qui est en cours et le plan des prochaines versions : sécurité en live, fiabilité, contrôleurs, patch, programmation et réseau.',
+		lead: 'Ce qu’il fait déjà, ce qui est en cours et le plan des prochaines versions. Pas de dates : chaque version sort quand elle est prête et testée.',
 		full: 'La feuille de route complète, sur GitHub',
+		versionsTitle: 'Versions publiées',
+		notes: 'Notes de version',
 		columns: [
 			{
 				title: 'C’est fait',
@@ -606,19 +615,110 @@ const fr: typeof es = {
 				items: [
 					'Tester et ajuster avec plus de vrai matériel : les interfaces DMX USB Enttec Pro et DMXKing, les nœuds Art-Net et sACN, l’APC40 mkII, le timecode MIDI et les téléphones en Wi-Fi',
 					'Un assistant qui détecte les interfaces connectées et un test de sortie',
+					'RDM : découvrir les fixtures connectés, voir leur modèle et leur mode et changer leur adresse depuis le programme, avec une interface compatible',
+				],
+			},
+		],
+		planEyebrow: 'Ensuite',
+		planTitle: 'Le plan, en sept parties',
+		planLead:
+			'Des fonctions nouvelles, dans l’ordre où il vaut mieux les faire. Chaque partie peut sortir comme une version une fois terminée, et la 1.2 avance en parallèle, selon le matériel disponible pour les tests. Aucune n’est encore faite, et le plan peut changer selon vos retours.',
+		part: 'Partie {n}',
+		parts: [
+			{
+				title: 'Sécurité en live',
+				text: 'Qu’une erreur ou un oubli ne gâche pas le show.',
+				items: [
+					'Mode show : Windows ne met pas l’ordinateur en veille et n’éteint pas l’écran, fermer le programme demande un appui long, et une alerte prévient si le portable passe sur batterie',
+					'Effets spéciaux protégés : le CO2, les flammes, les étincelles froides ou les confettis ne se déclenchent qu’armés et depuis leurs propres boutons',
+					'Parquer des canaux sur une valeur fixe que rien ne change, comme la machine à brume à 30 % toute la soirée',
+					'Arrêt du show : un bouton à maintenir enfoncé qui désarme les effets, coupe le stroboscope et met de la lumière blanche sur le public',
+					'Annuler « Tout arrêter » pendant quelques secondes, et arrêter avec un fondu',
 				],
 			},
 			{
-				title: 'Plus tard',
-				subtitle: 'Sur la liste',
+				title: 'Fiabilité : ne rien perdre',
+				text: 'Le show, l’installation et ce qui jouait, toujours en sécurité.',
 				items: [
-					'Visualiseur 3D',
-					'Mappings vidéo sur le plan 2D',
-					'Captures du manuel dans chaque langue',
-					'Installateur signé, pour que Windows n’affiche plus d’avertissement',
-					'Versions de test pour ceux qui veulent avoir un temps d’avance',
+					'Les fixtures voyagent avec le show : en l’ouvrant sur un autre ordinateur, il n’en manque aucun',
+					'Après une fermeture inattendue, revenir à ce qui jouait avec un fondu court',
+					'Historique des versions du show et copie sur une clé USB',
+					'Les contrôleurs MIDI se reconnectent tout seuls, avec leurs LED à jour',
+					'Un voyant de santé du live qui passe au rouge et dit ce qui se passe',
+					'Vérifier l’installation avant le show : fixtures sans sortie, contrôleurs absents, adresses en double…',
 				],
 			},
+			{
+				title: 'Live : contrôleurs, rythme et écrans',
+				text: 'Plus de mains en live et une lumière plus collée à la musique.',
+				items: [
+					'Shift et banques sur l’APC mini mk2 : plus de groupes et plus de scènes avec les mêmes pads',
+					'Reprendre les mappages, les pages du SHOW et les palettes d’un autre show, et vos propres modèles de contrôleur',
+					'Un tap qui marque le « 1 » et le BPM avec décimales',
+					'Le tempo venu de l’extérieur : en écoutant la musique, par horloge MIDI ou depuis le logiciel du DJ via le réseau (OS2L)',
+					'Une lumière qui suit la musique par bandes : graves, médiums, aigus et volume',
+					'Macros FX à la volée sur un groupe de fixtures, au BPM du show',
+					'Le SHOW et d’autres vues dans une deuxième fenêtre, sur le deuxième écran',
+				],
+			},
+			{
+				title: 'Patch et plan',
+				text: 'De grandes installations, plus rapides à patcher et à entretenir.',
+				items: [
+					'Rechercher dans le Patch et dans toute la bibliothèque de fixtures',
+					'Le numéro ou l’adresse dans les étiquettes du plan',
+					'Feuille de patch en PDF et CSV, avec les interrupteurs DIP',
+					'Annuler dans le Patch',
+					'Dupliquer et cloner des fixtures avec leur programmation',
+					'Changer le modèle ou le mode d’un fixture sans perdre la programmation',
+					'La hauteur de chaque fixture et une vue de face sur le plan',
+					'Ponts, écrans, praticables et image de fond sur le plan',
+					'Importer et exporter le MVR, le format d’installation des visualiseurs',
+				],
+			},
+			{
+				title: 'Programmation',
+				text: 'Programmer plus vite et corriger sans crainte.',
+				items: [
+					'Annuler dans Programmer et dans les éditeurs',
+					'Temps de fondu dans le programmeur et dans les palettes',
+					'Enregistrer et mettre à jour seulement certains attributs : intensité, couleur, position, faisceau ou FX',
+					'Éventail sur n’importe quel attribut : zoom, iris, focus, dimmer et dégradés de couleur',
+					'Temps par attribut aussi dans les scènes',
+					'FX ordonnés selon le plan 2D : de gauche à droite, depuis le centre, en cercle…',
+					'Palettes de position par point, toujours valables si vous déplacez une lyre',
+					'Mettre à jour ce qui joue, en sachant d’où vient chaque valeur',
+					'Aveugle avec aperçu sur le plan et dans le visualiseur',
+				],
+			},
+			{
+				title: 'Connexions et réseau',
+				text: 'Travailler avec la vidéo, le visualiseur et le reste de l’équipe.',
+				items: [
+					'Plusieurs sorties par univers : l’interface DMX USB, le visualiseur et la vidéo en même temps, avec les réglages Art-Net et sACN',
+					'OSC et MIDI avec l’application vidéo, dans les deux sens',
+					'Télécommande avec profils : chaque téléphone avec son PIN, ses pages et ses droits',
+					'Télécommande de focus, pour régler les projecteurs depuis la scène avec le téléphone',
+					'Timecode LTC par l’audio et via Art-Net',
+					'Mélanger une entrée Art-Net, sACN ou DMX avec ce qui sort',
+				],
+			},
+			{
+				title: 'Grands projets',
+				text: 'Ce qui demande le plus de travail, une fois le reste en place.',
+				items: [
+					'Ordinateur de secours qui suit le show et reprend la sortie si le principal tombe en panne',
+					'Vidéo en direct dans les mappings du plan 2D, par Spout, NDI ou une carte d’acquisition',
+					'Version pour Linux, puis pour macOS',
+				],
+			},
+		],
+		laterTitle: 'Plus tard',
+		later: [
+			'Visualiseur 3D',
+			'Captures du manuel dans chaque langue',
+			'Installateur signé, pour que Windows n’affiche plus d’avertissement',
+			'Versions de test pour ceux qui veulent avoir un temps d’avance',
 		],
 		outTitle: 'Hors du périmètre',
 		out: [
@@ -626,6 +726,38 @@ const fr: typeof es = {
 			'Bibliothèques dans le cloud et formats fermés d’autres fabricants : nous utilisons l’Open Fixture Library, GDTF et le créateur de fixtures.',
 		],
 		idea: 'Il vous manque quelque chose ? <a href="issues:">Proposez une idée</a>.',
+		ideaDonate: 'Et si vous voulez que ça arrive plus tôt, <a href="page:donate">soutenez le projet</a>.',
+	},
+
+	donate: {
+		title: 'Faire un don',
+		description:
+			'Soutenez DMX Total Control par un don. Le programme est et restera gratuit et libre ; votre aide paie du matériel pour le tester, le certificat de signature et le temps de développement.',
+		h1: 'Soutenez DMX Total Control',
+		lead: 'Le programme est gratuit et le restera : pas de version payante, pas de fonctions bloquées et pas de publicité. S’il vous évite une licence ou vous sauve une presta, un don l’aide à continuer de grandir.',
+		platformsTitle: 'Choisissez comment',
+		platforms: {
+			kofi: 'Un café ou un soutien mensuel, par carte ou PayPal.',
+			github: 'Un soutien ponctuel ou mensuel avec votre compte GitHub.',
+			paypal: 'Le montant que vous voulez, avec PayPal ou par carte.',
+			liberapay: 'Un soutien récurrent, sans commission de la plateforme.',
+		},
+		soon: 'Les dons ouvrent très bientôt. En attendant, découvrez d’autres façons d’aider dans <a href="page:contribute">Contribuer</a>.',
+		usesTitle: 'À quoi sert votre don',
+		uses: [
+			{ title: 'Du matériel pour tester', text: 'Des interfaces DMX USB Enttec Pro et DMXKing, un nœud Art-Net, l’APC40 mkII et de vrais fixtures : ce que demande la <a href="page:roadmap">version 1.2</a> pour vérifier que tout marche avec votre matériel.' },
+			{ title: 'Un installateur signé', text: 'Le certificat de signature de code, pour que Windows n’affiche plus d’avertissement à l’installation.' },
+			{ title: 'Du temps pour le plan', text: 'Les sept parties de la <a href="page:roadmap">feuille de route</a> : sécurité en live, fiabilité, contrôleurs, patch, programmation et réseau.' },
+			{ title: 'Le site et le manuel', text: 'Le nom de domaine, le manuel en ligne et les guides, en six langues.' },
+		],
+		freeTitle: 'On peut aussi aider sans argent',
+		free: 'Tester votre matériel, signaler des bugs, traduire ou le recommander vaut autant qu’un don. Voyez comment dans <a href="page:contribute">Contribuer</a>.',
+		freeAction: 'D’autres façons d’aider',
+		notes: [
+			'Les dons sont volontaires et ne donnent accès à rien de plus : le programme est le même pour tous.',
+			'Le paiement est géré par la plateforme que vous choisissez, avec sa propre politique de confidentialité : nous ne voyons pas les données de votre carte.',
+		],
+		thanks: 'Merci de soutenir le logiciel libre.',
 	},
 
 	press: {

@@ -1,6 +1,7 @@
 ---
 import { Icon } from '@astrojs/starlight/components';
 import Site from '../layouts/Site.astro';
+import { DONATIONS_OPEN } from '../data/donate';
 import { dict, resolveHref, routePaths, type Lang } from '../i18n';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const c = dict(lang).contribute;
+const tasks = c.tasks.filter((t) => DONATIONS_OPEN || t.link !== 'page:donate');
 ---
 
 <Site lang={lang} paths={routePaths('contribute')} title={c.title} description={c.description}>
@@ -22,7 +24,7 @@ const c = dict(lang).contribute;
 	<div class="wrap body">
 		<div class="grid tasks">
 			{
-				c.tasks.map((task) => (
+				tasks.map((task) => (
 					<div class="card">
 						<h2>{task.title}</h2>
 						<p class="muted">{task.text}</p>

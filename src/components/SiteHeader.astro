@@ -3,6 +3,7 @@ import { Icon } from '@astrojs/starlight/components';
 import logo from '../assets/logo.svg';
 import { LANGS, REPO, dict, manualUrl, pageUrl, url, type Lang } from '../i18n';
 import type { Section } from '../layouts/Site.astro';
+import { DONATIONS_OPEN } from '../data/donate';
 
 interface Props {
 	lang: Lang;
@@ -18,7 +19,9 @@ const links = [
 	{ href: pageUrl('learn', lang), label: n.learn, current: section === 'learn' },
 	{ href: manualUrl(lang), label: n.manual, current: false },
 	{ href: pageUrl('faq', lang), label: n.faq, current: section === 'faq' },
+	{ href: pageUrl('roadmap', lang), label: n.roadmap, current: section === 'roadmap' },
 ];
+const donate = DONATIONS_OPEN ? pageUrl('donate', lang) : null;
 const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: url(paths[l]) }));
 ---
 
@@ -50,6 +53,13 @@ const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: ur
 					}
 				</ul>
 			</details>
+			{
+				donate && (
+					<a class="icon donate" href={donate} aria-label={n.donate} title={n.donate} aria-current={section === 'donate' ? 'page' : undefined}>
+						<Icon name="heart" size="1.25em" />
+					</a>
+				)
+			}
 			<a class="icon" href={REPO} aria-label="GitHub"><Icon name="github" size="1.35em" /></a>
 			<a class="btn btn-primary btn-sm cta" href={pageUrl('download', lang)}>
 				<Icon name="download" size="1.1em" />
@@ -59,6 +69,7 @@ const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: ur
 				<summary aria-label={n.menu}><Icon name="bars" size="1.5em" /></summary>
 				<div class="panel">
 					{links.map((l) => <a href={l.href}>{l.label}</a>)}
+					{donate && <a href={donate}>{n.donate}</a>}
 					<a href={pageUrl('download', lang)}>{n.download}</a>
 					<a href={REPO}>GitHub</a>
 				</div>
@@ -115,6 +126,7 @@ const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: ur
 	.links {
 		display: none;
 		gap: 2px;
+		white-space: nowrap;
 	}
 
 	.links a,
@@ -151,6 +163,11 @@ const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: ur
 
 	.cta {
 		display: none;
+	}
+
+	.donate:hover,
+	.donate[aria-current='page'] {
+		color: #ff5c8a;
 	}
 
 	details {
@@ -247,7 +264,7 @@ const languages = LANGS.map((l) => ({ lang: l, name: dict(l).meta.name, href: ur
 		}
 	}
 
-	@media (min-width: 1040px) {
+	@media (min-width: 1280px) {
 		.links,
 		.icon {
 			display: flex;
